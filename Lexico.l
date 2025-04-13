@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "y.tab.h"
+//#include "y.tab.h"
 FILE  *yyin;
 char *yytext;
 
@@ -19,11 +19,11 @@ int funcionValidarRangoString(char*);
 %option noyywrap  
 %option yylineno 
 
-// Conjutos
+/* Conjutos */
 DIGITO			        [0-9]
 LETRA			        [a-zA-Z]
 
-//Tipo de datos
+/*Tipo de datos */
 CTEENTERO		        {DIGITO}+
 CTENUMEROCONCOMA		({DIGITO}+"."{DIGITO}* | {DIGITO}*"."{DIGITO}+)
 CTETIPOCADENITA			\"[^"]*\"
@@ -32,28 +32,28 @@ INT                     "TIPOENTERO"
 FLOAT                   "TIPONUMEROCONCOMA"
 STRING                  "TIPOCADENITA"
 
-//Declaración de variables
+/*Declaración de variables */
 ID                      {LETRA}({LETRA}|{DIGITO})*
 INICIARVARIABLE         "ARRANCAACA"
 DOSPUNTITOS             ":"
 COMA                    ","
 
-//Comentarios
+/*Comentarios */
 INICHISME               "#+"
 FINCHISME               "+#"
 CHISMECITO              {INICHISME}[^+#]*{FINCHISME}
 
 
-//Operador asignacion
+/*Operador asignacion */
 OP_AS   		        "="
 
-//Operadores Aritmeticos
+/*Operadores Aritmeticos */
 OP_SUM		            "+"
 OP_MUL                  "*"
 OP_RES		            "-"
 OP_DIV                  "/"
 
-//Operadorees Comparacion
+/*Operadorees Comparacion */
 COMP_MAYOR              "MAYOR"
 COMP_MENOR              "MENOR"
 COMP_IGUAL              "IGUALA"
@@ -61,12 +61,12 @@ COMP_DIST               "DISTINTASO"
 COMP_MAYORIGUAL         "MAYORIGUAL"
 COMP_MENORIGUAL         "MENORIGUAL"
 
-//Operadores Logicos
+/*Operadores Logicos */
 OP_AND                  "YQUEMAS"
 OP_OR                   "OQUEMAS"
 OP_NOT                  "NOES"
 
-//BLOQUES
+/*BLOQUES */
 PA			            "("
 PC			            ")"
 CA                      "["
@@ -74,27 +74,35 @@ CC                      "]"
 LA                      "{"
 LC                      "}"
 
-//Funciones base
+/*Funciones base */
 WHILE                   "MIENTRAS"
 IF                      "SI"
 ELSE                    "SINO"
 READ                    "LEER"
 WRITE                   "DECIR"
 
-//Funciones adicionales
+/*Funciones adicionales */
 REORDER                 "MENJUNJE"
 SLICEANDCONCAT          "CORTAYPEGAR"
+
+
+
+
+
+/*{printf("\nTipo entero: %s\n", yytext);return INT;}*/
+/*TODO: Realizar validacion de rango */
+/*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}
+{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
 
 %%
 
 
-//TODO: Realizar validacion de rango
 {CTEENTERO}			        {printf("\nConstante entera: %s\n", yytext);return CTEENTERO;}
 {CTENUMEROCONCOMA}			{printf("\nConstante flotante: %s\n", yytext);return CTENUMEROCONCOMA;}
 {CTETIPOCADENITA}			{printf("\nConstante string: %s\n", yytext);return CTETIPOCADENITA;}
 
-{INT}			            {if()}
-/*{printf("\nTipo entero: %s\n", yytext);return INT;}*/
+{INT}			            {printf("\nTipo int: %s\n", yytext);return INT;}
+
 {FLOAT}			            {printf("\nTipo flotante: %s\n", yytext);return FLOAT;}
 {STRING}			        {printf("\nTipo string: %s\n", yytext);return STRING;}
 
@@ -107,8 +115,7 @@ SLICEANDCONCAT          "CORTAYPEGAR"
 {DOSPUNTITOS}               {printf("\nDos puntitos: %s\n", yytext);return DOSPUNTITOS;}
 {COMA}                      {printf("\nComa: %s\n", yytext);return COMA;}
 
-//{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}
-//{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;}
+
 {CHISMECITO}                {}
 
 
@@ -174,4 +181,22 @@ int funcionValidarRangoFloat(char* pValor){
 
 int funcionValidarRangoString(char* pValor){
     
+}
+
+
+int main(int argc, char **argv) {
+    if (argc != 2) {
+        fprintf(stderr, "Uso: %s <archivo>\n", argv[0]);
+        exit(1);
+    }
+
+    yyin = fopen(argv[1], "r");
+    if (!yyin) {
+        perror("No se pudo abrir el archivo");
+        exit(1);
+    }
+
+    yylex();
+    fclose(yyin);
+    return 0;
 }
