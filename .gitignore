@@ -50,3 +50,17 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Flex
+bin/
+bin-debug/
+bin-release/
+.idea
+lex.yy.c
+y.tab.c
+y.output
+y.tab.h
+compilador
+
+# VSCode
+.vscode
