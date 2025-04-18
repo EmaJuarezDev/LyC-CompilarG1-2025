@@ -1,18 +1,18 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //#include "y.tab.h"
 FILE  *yyin;
+/*extern yylval;*/
 char *yytext;
-
 
 int yyerror(void);
 
 int funcionValidarRangoInt(char*);
 int funcionValidarRangoFloat(char*);
 int funcionValidarRangoString(char*);
-
 
 %}
 
@@ -22,16 +22,17 @@ int funcionValidarRangoString(char*);
 /* Conjutos */
 DIGITO			        [0-9]
 LETRA			        [a-zA-Z]
+/*SIMBOLOS                [@]*/
 
 /*Tipo de datos */
-CTEENTERO		        {DIGITO}+
-CTENUMEROCONCOMA		{DIGITO}+"."{DIGITO}*|{DIGITO}*"."{DIGITO}+
-CTETIPOCADENITA			\"[^"]*\"
+CTEENTERO		        "-"?{DIGITO}+
+CTENUMEROCONCOMA		"-"?(({DIGITO}+"."{DIGITO}*)|({DIGITO}*"."{DIGITO}+))
+CTETIPOCADENITA			{COMILLAS}([^\\\"]|\\.)*{COMILLAS}
+
 
 INT                     "TIPOENTERO"
 FLOAT                   "TIPONUMEROCONCOMA"
 STRING                  "TIPOCADENITA"
-
 
 /*Declaración de variables */
 ID                      {LETRA}({LETRA}|{DIGITO})*
@@ -44,15 +45,17 @@ INICHISME               "#+"
 FINCHISME               "+#"
 CHISMECITO              {INICHISME}[^+#]*{FINCHISME}
 
+/*Cadenas*/
+COMILLAS                "\""
 
 /*Operador asignacion */
-OP_AS   		        "="
+OP_AS   		        ":="
 
 /*Operadores Aritmeticos */
-OP_SUM		            "+"
-OP_MUL                  "*"
-OP_RES		            "-"
-OP_DIV                  "/"
+OP_SUM		            "MAS"
+OP_MUL                  "POR"
+OP_RES		            "MENOS"
+OP_DIV                  "DIVIDIR"
 
 /*Operadorees Comparacion */
 COMP_MAYOR              "MAYOR"
@@ -86,41 +89,33 @@ WRITE                   "DECIR"
 REORDER                 "MENJUNJE"
 SLICEANDCONCAT          "CORTAYPEGAR"
 
-
-
 /*{printf("\nTipo entero: %s\n", yytext);return INT;}*/
 /*TODO: Realizar validacion de rango */
-/*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}
-{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
-
+/*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}*/
+/*{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
 
 %%
-
-
-{CTEENTERO}			        {printf("\nConstante entera: %s\n", yytext);}
-{CTENUMEROCONCOMA}			{printf("\nConstante flotante: %s\n", yytext);}
-{CTETIPOCADENITA}			{printf("\nConstante string: %s\n", yytext);}
+{CTEENTERO}			        funcionValidarRangoInt(yytext); //{printf("\nConstante entera: %s\n", yytext);}
+{CTENUMEROCONCOMA}			funcionValidarRangoFloat(yytext); //{printf("\nConstante flotante: %s\n", yytext);}
+{CTETIPOCADENITA}			funcionValidarRangoString(yytext); //{printf("\nConstante string: %s\n", yytext);}
 
 {INT}			            {printf("\nTipo int: %s\n", yytext);}
 {FLOAT}			            {printf("\nTipo flotante: %s\n", yytext);}
 {STRING}			        {printf("\nTipo string: %s\n", yytext);}
 
-{ID}			            {printf("\nIdentificador: %s\n", yytext);}
+
 {INICIARVARIABLE}           {printf("\nInicio declaracion variable: %s\n", yytext);}
 {DOSPUNTITOS}               {printf("\nDos puntitos: %s\n", yytext);}
 {COMA}                      {printf("\nComa: %s\n", yytext);}
 
-{CHISMECITO}                {}
-
+{CHISMECITO}                {printf("\nChisme: %s\n", yytext);}
 
 {OP_AS}			            {printf("\nAsignacion: %s\n", yytext);}
-
 
 {OP_SUM}		            {printf("\nSuma: %s\n", yytext);}
 {OP_MUL}		            {printf("\nMultiplicacion: %s\n", yytext);}
 {OP_RES}		            {printf("\nResta: %s\n", yytext);}
 {OP_DIV}		            {printf("\nDivision: %s\n", yytext);}
-
 
 {COMP_MAYOR}		        {printf("\nMayor: %s\n", yytext);}
 {COMP_MENOR}		        {printf("\nMenor: %s\n", yytext);}
@@ -129,48 +124,46 @@ SLICEANDCONCAT          "CORTAYPEGAR"
 {COMP_MAYORIGUAL}		    {printf("\nMayor e igual: %s\n", yytext);}
 {COMP_MENORIGUAL}		    {printf("\nMenor e igual: %s\n", yytext);}
 
-
 {OP_AND}		            {printf("\nAnd: %s\n", yytext);}
 {OP_OR}		                {printf("\nOr: %s\n", yytext);}
 {OP_NOT}		            {printf("\nNot: %s\n", yytext);}
-
-
 
 {PA}			            {printf("\nParAbre: %s\n", yytext);}
 {PC}			            {printf("\nParCierra: %s\n", yytext);}
 {CA}			            {printf("\nCorAbre: %s\n", yytext);}
 {CC}			            {printf("\nCorCierra: %s\n", yytext);}
-{LA}			            {printf("\nLlaCierra: %s\n", yytext);}
+{LA}			            {printf("\nLlaAbre: %s\n", yytext);}
 {LC}			            {printf("\nLlaCierra: %s\n", yytext);}
 
-
-{WHILE}			            {printf("\nMientras: %s\n", yytext);}
-{IF}			            {printf("\nSi: %s\n", yytext);}
-{ELSE}			            {printf("\nSino: %s\n", yytext);}
-{READ}			            {printf("\nLeer: %s\n", yytext);}
-{WRITE}			            {printf("\nDecir: %s\n", yytext);}
-
+{WHILE}			            {printf("\nwhile: %s\n", yytext);}
+{IF}			            {printf("\nif: %s\n", yytext);}
+{ELSE}			            {printf("\nelse: %s\n", yytext);}
+{READ}			            {printf("\nread: %s\n", yytext);}
+{WRITE}			            {printf("\nwrite: %s\n", yytext);}
 
 {REORDER}			        {printf("\nReorder: %s\n", yytext);}
 {SLICEANDCONCAT}			{printf("\nSliceAndConcat: %s\n", yytext);}
+
+{ID}			            {printf("\nIdentificador: %s\n", yytext);}
 
 "\n"      		
 "\t"
 "\n\t"
 " "             		
 "\r\n"
-.			 { printf( "ERROR LEXICO : Caracter no reconocido: %s\n", yytext ); exit (0);}
+.			                {printf( "Error lexico. Caracter no reconocido: %s\n", yytext ); exit (0);}
 
 %%
 
-
 int main(int argc, char **argv) {
+    
     if (argc != 2) {
         fprintf(stderr, "Uso: %s <archivo>\n", argv[0]);
         exit(1);
     }
 
     yyin = fopen(argv[1], "r");
+    
     if (!yyin) {
         perror("No se pudo abrir el archivo");
         exit(1);
@@ -178,5 +171,69 @@ int main(int argc, char **argv) {
 
     yylex();
     fclose(yyin);
+    
     return 0;
 }
+
+int funcionValidarRangoInt(char* cte)
+{
+    int entero = atoi(cte);
+
+    if((entero >= (-32768)) && (entero < 32768))
+        printf("Constante entera valida: %s\n", cte);
+    else
+        printf("Constante entera invalida: %s\n", cte);
+}
+
+int funcionValidarRangoFloat(char* cte)
+{
+    float numero = atof(cte);
+
+    if (numero >= (-3.4e38) && numero <= 3.4e38)
+        printf("Constante flotante valida: %s\n", cte);
+    else
+        printf("Constante flotante invalida: %s\n", cte);
+    
+}
+
+/*int funcionValidarRangoString(char* cte) {
+
+    int longitud = (strlen(cte) - 2);
+    char cadena[longitud + 1];
+
+    strncpy(cadena, cte + 1, longitud);
+    cadena[longitud] = '\0';
+
+    if(longitud <= 50)
+        printf("Constante String valida: \"%s\"\n", cadena);
+    else 
+        printf("Constante String invalida: \"%s\"\n", cadena);
+}*/
+
+int funcionValidarRangoString(char* cte) {
+    int longitud_real = (strlen(cte) - 2);
+    
+    // Crear una nueva cadena (sin escapes)
+    char cadena[longitud_real]; // tamaño real
+    int i = 1; // empezamos después de la primera comilla
+    int j = 0;
+
+    for(; i < longitud_real; i++, j++) {
+        if (cte[i] == '\\' && cte[i+1] == '"') {
+            cadena[j] = '"';
+            i += 2 ;
+        } else {  
+            cadena[j] = cte[i];
+        }
+    }
+    cadena[j] = '\0';
+
+    if (j <= 50)
+        printf("Constante String valida: \"%s\"\n", cadena);
+    else 
+        printf("Constante String invalida: \"%s\"\n", cadena);
+    
+    return j <= 50;
+}
+
+
