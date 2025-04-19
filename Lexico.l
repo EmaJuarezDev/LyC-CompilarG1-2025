@@ -5,7 +5,7 @@
 #include <limits.h>
 #include <float.h>
 #include "tablaDeSimbolos.h"
-//#include "y.tab.h"
+#include "y.tab.h"
 
 FILE  *yyin;
 /*extern yylval;*/
@@ -16,6 +16,8 @@ int validarRangoInt(char*);
 int validarRangoFloat(char*);
 int validarRangoString(char*);
 int insertarId(char*);
+
+int yyparse(void);
 %}
 
 %option noyywrap  
@@ -96,55 +98,55 @@ SLICEANDCONCAT          "CORTAYPEGAR"
 /*{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
 
 %%
-{CTEENTERO}			        validarRangoInt(yytext); //{printf("\nConstante entera: %s\n", yytext);}
-{CTENUMEROCONCOMA}			validarRangoFloat(yytext); //{printf("\nConstante flotante: %s\n", yytext);}
-{CTETIPOCADENITA}			validarRangoString(yytext); //{printf("\nConstante string: %s\n", yytext);}
+{CTEENTERO}			        {validarRangoInt(yytext); return CTEENTERO;}//{printf("\nConstante entera: %s\n", yytext);}
+{CTENUMEROCONCOMA}			{validarRangoFloat(yytext); return CTENUMEROCONCOMA;}//{printf("\nConstante flotante: %s\n", yytext);}
+{CTETIPOCADENITA}			{validarRangoString(yytext); return CTETIPOCADENITA;}//{printf("\nConstante string: %s\n", yytext);}
 
-{INT}			            {printf("\nTipo int: %s\n", yytext);}
-{FLOAT}			            {printf("\nTipo flotante: %s\n", yytext);}
-{STRING}			        {printf("\nTipo string: %s\n", yytext);}
+{INT}			            {printf("\nTipo int: %s\n", yytext); return INT;}
+{FLOAT}			            {printf("\nTipo flotante: %s\n", yytext); return FLOAT;}
+{STRING}			        {printf("\nTipo string: %s\n", yytext); return STRING;}
 
-{INICIARVARIABLE}           {printf("\nInicio declaracion variable: %s\n", yytext);}
-{DOSPUNTITOS}               {printf("\nDos puntitos: %s\n", yytext);}
-{COMA}                      {printf("\nComa: %s\n", yytext);}
+{INICIARVARIABLE}           {printf("\nInicio declaracion variable: %s\n", yytext); return INICIARVARIABLE;}
+{DOSPUNTITOS}               {printf("\nDos puntitos: %s\n", yytext); return DOSPUNTITOS;}
+{COMA}                      {printf("\nComa: %s\n", yytext); return COMA;}
 
-{CHISMECITO}                {printf("\nChisme: %s\n", yytext);}
+{CHISMECITO}                {printf("\nChisme: %s\n", yytext); return CHISMECITO;}
 
-{OP_AS}			            {printf("\nAsignacion: %s\n", yytext);}
+{OP_AS}			            {printf("\nAsignacion: %s\n", yytext); return OP_AS;}
 
-{OP_SUM}		            {printf("\nSuma: %s\n", yytext);}
-{OP_MUL}		            {printf("\nMultiplicacion: %s\n", yytext);}
-{OP_RES}		            {printf("\nResta: %s\n", yytext);}
-{OP_DIV}		            {printf("\nDivision: %s\n", yytext);}
+{OP_SUM}		            {printf("\nSuma: %s\n", yytext); return OP_SUM;}
+{OP_MUL}		            {printf("\nMultiplicacion: %s\n", yytext); return OP_MUL;}
+{OP_RES}		            {printf("\nResta: %s\n", yytext); return OP_RES;}
+{OP_DIV}		            {printf("\nDivision: %s\n", yytext); return OP_DIV;}
 
-{COMP_MAYOR}		        {printf("\nMayor: %s\n", yytext);}
-{COMP_MENOR}		        {printf("\nMenor: %s\n", yytext);}
-{COMP_IGUAL}		        {printf("\nIgual: %s\n", yytext);}
-{COMP_DIST}		            {printf("\nDistinto: %s\n", yytext);}
-{COMP_MAYORIGUAL}		    {printf("\nMayor e igual: %s\n", yytext);}
-{COMP_MENORIGUAL}		    {printf("\nMenor e igual: %s\n", yytext);}
+{COMP_MAYOR}		        {printf("\nMayor: %s\n", yytext); return COMP_MAYOR;}
+{COMP_MENOR}		        {printf("\nMenor: %s\n", yytext); return COMP_MENOR;}
+{COMP_IGUAL}		        {printf("\nIgual: %s\n", yytext); return COMP_IGUAL;}
+{COMP_DIST}		            {printf("\nDistinto: %s\n", yytext); return COMP_DIST;}
+{COMP_MAYORIGUAL}		    {printf("\nMayor e igual: %s\n", yytext); return COMP_MAYORIGUAL;}
+{COMP_MENORIGUAL}		    {printf("\nMenor e igual: %s\n", yytext); return COMP_MENORIGUAL;}
 
-{OP_AND}		            {printf("\nAnd: %s\n", yytext);}
-{OP_OR}		                {printf("\nOr: %s\n", yytext);}
-{OP_NOT}		            {printf("\nNot: %s\n", yytext);}
+{OP_AND}		            {printf("\nAnd: %s\n", yytext); return OP_AND;}
+{OP_OR}		                {printf("\nOr: %s\n", yytext); return OP_OR;}
+{OP_NOT}		            {printf("\nNot: %s\n", yytext); return OP_NOT;}
+{COMILLAS}                  {printf("\nComillas: %s\n", yytext); return COMILLAS;}
+{PA}			            {printf("\nParAbre: %s\n", yytext); return PA;}
+{PC}			            {printf("\nParCierra: %s\n", yytext); return PC;}
+{CA}			            {printf("\nCorAbre: %s\n", yytext); return CA;}
+{CC}			            {printf("\nCorCierra: %s\n", yytext); return CC;}
+{LA}			            {printf("\nLlaAbre: %s\n", yytext); return LA;}
+{LC}			            {printf("\nLlaCierra: %s\n", yytext); return LC;}
 
-{PA}			            {printf("\nParAbre: %s\n", yytext);}
-{PC}			            {printf("\nParCierra: %s\n", yytext);}
-{CA}			            {printf("\nCorAbre: %s\n", yytext);}
-{CC}			            {printf("\nCorCierra: %s\n", yytext);}
-{LA}			            {printf("\nLlaAbre: %s\n", yytext);}
-{LC}			            {printf("\nLlaCierra: %s\n", yytext);}
+{WHILE}			            {printf("\nwhile: %s\n", yytext); return WHILE;}
+{IF}			            {printf("\nif: %s\n", yytext); return IF;}
+{ELSE}			            {printf("\nelse: %s\n", yytext); return ELSE;}
+{READ}			            {printf("\nread: %s\n", yytext); return READ;}
+{WRITE}			            {printf("\nwrite: %s\n", yytext); return WRITE;}
 
-{WHILE}			            {printf("\nwhile: %s\n", yytext);}
-{IF}			            {printf("\nif: %s\n", yytext);}
-{ELSE}			            {printf("\nelse: %s\n", yytext);}
-{READ}			            {printf("\nread: %s\n", yytext);}
-{WRITE}			            {printf("\nwrite: %s\n", yytext);}
+{REORDER}			        {printf("\nReorder: %s\n", yytext); return REORDER;}
+{SLICEANDCONCAT}			{printf("\nSliceAndConcat: %s\n", yytext); return SLICEANDCONCAT;}
 
-{REORDER}			        {printf("\nReorder: %s\n", yytext);}
-{SLICEANDCONCAT}			{printf("\nSliceAndConcat: %s\n", yytext);}
-
-{ID}			            insertarId(yytext); //{printf("\nIdentificador: %s\n", yytext);}
+{ID}			            {insertarId(yytext); return ID;} //{printf("\nIdentificador: %s\n", yytext);}
 
 "\n"      		
 "\t"
@@ -168,8 +170,11 @@ int main(int argc, char **argv) {
         perror("No se es posible abrir el archivo. \n");
         exit(1);
     }
-
-    yylex();
+    else
+    {
+        yyparse();
+    }
+    /*yylex();*/
     fclose(yyin);
     generarArchivo();
     return 0;
@@ -188,6 +193,7 @@ int validarRangoInt(char* cte)
             insertarEnTabla(nombre, "", cte, "");
     } else
         printf("Constante entera invalida: %s\n", cte);
+
 }
 
 int validarRangoFloat(char* cte)
@@ -203,7 +209,7 @@ int validarRangoFloat(char* cte)
             insertarEnTabla(nombre, "", cte, "");
     } else
         printf("Constante flotante invalida: %s\n", cte);
-    
+
 }
 
 int validarRangoString(char* cte) {
@@ -224,6 +230,7 @@ int validarRangoString(char* cte) {
             insertarEnTabla(nombre, "", cadena, itoa((longitud - 1), auxLongitud, 10));
     } else 
         printf("Constante String invalida: \"%s\"\n", cadena);
+    
 }
 
 int insertarId(char* id) {

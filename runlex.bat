@@ -1,5 +1,6 @@
 :: Script para windows
-flex Lexico.l
-gcc tablaDeSimbolos.c lex.yy.c -o lexer
 
-.\lexer .\ejemplos.\assignments.txt
+bison -dyv Sintactico.y
+flex Lexico.l
+gcc y.tab.c lex.yy.c tablaDeSimbolos.c -o lexer
+.\lexer .\ejemplos.\while.txt

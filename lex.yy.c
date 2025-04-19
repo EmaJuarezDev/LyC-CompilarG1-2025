@@ -289,60 +289,60 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 45
-#define YY_END_OF_BUFFER 46
-static yyconst short int yy_acclist[249] =
+#define YY_NUM_RULES 46
+#define YY_END_OF_BUFFER 47
+static yyconst short int yy_acclist[250] =
     {   0,
-       46,   44,   45,   40,   44,   45,   39,   45,   44,   45,
-       42,   44,   45,   44,   45,   44,   45,   25,   44,   45,
-       26,   44,   45,    9,   44,   45,   44,   45,   44,   45,
-        1,   44,   45,    8,   44,   45,   38,   44,   45,   38,
-       44,   45,   38,   44,   45,   38,   44,   45,   38,   44,
-       45,   38,   44,   45,   38,   44,   45,   38,   44,   45,
-       38,   44,   45,   38,   44,   45,   38,   44,   45,   38,
-       44,   45,   38,   44,   45,   27,   44,   45,   28,   44,
-       45,   29,   44,   45,   30,   44,   45,   41,   43,    3,
-        1,    2,    2,   11,   38,   38,   38,   38,   38,   38,
+       47,   45,   46,   41,   45,   46,   40,   46,   45,   46,
+       43,   45,   46,   25,   45,   46,   45,   46,   26,   45,
+       46,   27,   45,   46,    9,   45,   46,   45,   46,   45,
+       46,    1,   45,   46,    8,   45,   46,   39,   45,   46,
+       39,   45,   46,   39,   45,   46,   39,   45,   46,   39,
+       45,   46,   39,   45,   46,   39,   45,   46,   39,   45,
+       46,   39,   45,   46,   39,   45,   46,   39,   45,   46,
+       39,   45,   46,   39,   45,   46,   28,   45,   46,   29,
+       45,   46,   30,   45,   46,   31,   45,   46,   42,   44,
+        3,    1,    2,    2,   11,   39,   39,   39,   39,   39,
 
-       38,   38,   38,   38,   38,   38,   38,   32,   38,   38,
-       38,    2,   38,   38,   38,   38,   38,   38,   38,   12,
-       38,   38,   38,   38,   38,   38,   13,   38,   38,   38,
-       38,   10,   38,   38,   38,   38,   38,   38,   34,   38,
-       38,   38,   38,   38,   24,   38,   38,   33,   38,   38,
-       38,   38,   38,   35,   38,   38,   38,   38,   16,   38,
-       38,   17,   38,   14,   38,   38,   38,   38,   38,   38,
-       38,   38,   38,   38,   38,   18,   38,   38,   38,   38,
-       38,   38,   38,   38,   38,   38,   38,   38,   38,   15,
-       38,   38,   38,   38,   38,   23,   38,   38,   38,   38,
+       39,   39,   39,   39,   39,   39,   39,   39,   33,   39,
+       39,   39,    2,   39,   39,   39,   39,   39,   39,   39,
+       12,   39,   39,   39,   39,   39,   39,   13,   39,   39,
+       39,   39,   10,   39,   39,   39,   39,   39,   39,   35,
+       39,   39,   39,   39,   39,   24,   39,   39,   34,   39,
+       39,   39,   39,   39,   36,   39,   39,   39,   39,   16,
+       39,   39,   17,   39,   14,   39,   39,   39,   39,   39,
+       39,   39,   39,   39,   39,   39,   18,   39,   39,   39,
+       39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
+       15,   39,   39,   39,   39,   39,   23,   39,   39,   39,
 
-       22,   38,   38,   38,   38,   38,   36,   38,   38,   31,
-       38,   38,   38,   38,   38,   38,   38,   38,   38,   38,
-       38,   38,    7,   38,   38,   19,   38,   20,   38,   21,
-       38,   38,    4,   38,   38,   37,   38,   38,   38,    6,
-       38,   38,   38,   38,   38,   38,    5,   38
+       39,   22,   39,   39,   39,   39,   39,   37,   39,   39,
+       32,   39,   39,   39,   39,   39,   39,   39,   39,   39,
+       39,   39,   39,    7,   39,   39,   19,   39,   20,   39,
+       21,   39,   39,    4,   39,   39,   38,   39,   39,   39,
+        6,   39,   39,   39,   39,   39,   39,    5,   39
     } ;
 
 static yyconst short int yy_accept[179] =
     {   0,
-        1,    1,    1,    2,    4,    7,    9,   11,   14,   16,
-       18,   21,   24,   27,   29,   31,   34,   37,   40,   43,
-       46,   49,   52,   55,   58,   61,   64,   67,   70,   73,
-       76,   79,   82,   85,   88,   89,   90,   90,   91,   91,
-       91,   92,   93,   94,   95,   96,   97,   98,   99,  100,
-      101,  102,  103,  104,  105,  106,  107,  108,  110,  111,
-      112,  112,  112,  113,  114,  115,  116,  117,  118,  119,
-      120,  122,  123,  124,  125,  126,  127,  129,  130,  131,
-      132,  133,  134,  135,  136,  137,  138,  139,  141,  142,
-      143,  144,  145,  147,  148,  150,  151,  152,  153,  154,
+        1,    1,    1,    2,    4,    7,    9,   11,   14,   17,
+       19,   22,   25,   28,   30,   32,   35,   38,   41,   44,
+       47,   50,   53,   56,   59,   62,   65,   68,   71,   74,
+       77,   80,   83,   86,   89,   90,   91,   91,   92,   92,
+       92,   93,   94,   95,   96,   97,   98,   99,  100,  101,
+      102,  103,  104,  105,  106,  107,  108,  109,  111,  112,
+      113,  113,  113,  114,  115,  116,  117,  118,  119,  120,
+      121,  123,  124,  125,  126,  127,  128,  130,  131,  132,
+      133,  134,  135,  136,  137,  138,  139,  140,  142,  143,
+      144,  145,  146,  148,  149,  151,  152,  153,  154,  155,
 
-      156,  157,  158,  159,  161,  162,  164,  166,  167,  168,
-      169,  170,  171,  172,  173,  174,  175,  176,  178,  179,
-      180,  181,  182,  183,  184,  185,  186,  187,  188,  189,
-      190,  192,  193,  194,  195,  196,  198,  199,  200,  201,
-      203,  204,  205,  206,  207,  209,  210,  212,  213,  214,
-      215,  216,  217,  218,  219,  220,  221,  222,  223,  225,
-      226,  228,  230,  232,  233,  235,  236,  238,  239,  240,
-      242,  243,  244,  245,  246,  247,  249,  249
+      157,  158,  159,  160,  162,  163,  165,  167,  168,  169,
+      170,  171,  172,  173,  174,  175,  176,  177,  179,  180,
+      181,  182,  183,  184,  185,  186,  187,  188,  189,  190,
+      191,  193,  194,  195,  196,  197,  199,  200,  201,  202,
+      204,  205,  206,  207,  208,  210,  211,  213,  214,  215,
+      216,  217,  218,  219,  220,  221,  222,  223,  224,  226,
+      227,  229,  231,  233,  234,  236,  237,  239,  240,  241,
+      243,  244,  245,  246,  247,  248,  250,  250
     } ;
 
 static yyconst int yy_ec[256] =
@@ -514,7 +514,7 @@ char *yytext;
 #include <limits.h>
 #include <float.h>
 #include "tablaDeSimbolos.h"
-//#include "y.tab.h"
+#include "y.tab.h"
 
 FILE  *yyin;
 /*extern yylval;*/
@@ -525,6 +525,8 @@ int validarRangoInt(char*);
 int validarRangoFloat(char*);
 int validarRangoString(char*);
 int insertarId(char*);
+
+int yyparse(void);
 /* Conjutos */
 /*Tipo de datos */
 /*Declaración de variables */
@@ -541,7 +543,7 @@ int insertarId(char*);
 /*TODO: Realizar validacion de rango */
 /*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}*/
 /*{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
-#line 545 "lex.yy.c"
+#line 547 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -692,9 +694,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 98 "Lexico.l"
+#line 100 "Lexico.l"
 
-#line 698 "lex.yy.c"
+#line 700 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -787,230 +789,235 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 99 "Lexico.l"
-validarRangoInt(yytext); //{printf("\nConstante entera: %s\n", yytext);}
+#line 101 "Lexico.l"
+{validarRangoInt(yytext); return CTEENTERO;}//{printf("\nConstante entera: %s\n", yytext);}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 100 "Lexico.l"
-validarRangoFloat(yytext); //{printf("\nConstante flotante: %s\n", yytext);}
+#line 102 "Lexico.l"
+{validarRangoFloat(yytext); return CTENUMEROCONCOMA;}//{printf("\nConstante flotante: %s\n", yytext);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 101 "Lexico.l"
-validarRangoString(yytext); //{printf("\nConstante string: %s\n", yytext);}
+#line 103 "Lexico.l"
+{validarRangoString(yytext); return CTETIPOCADENITA;}//{printf("\nConstante string: %s\n", yytext);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 103 "Lexico.l"
-{printf("\nTipo int: %s\n", yytext);}
+#line 105 "Lexico.l"
+{printf("\nTipo int: %s\n", yytext); return INT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 104 "Lexico.l"
-{printf("\nTipo flotante: %s\n", yytext);}
+#line 106 "Lexico.l"
+{printf("\nTipo flotante: %s\n", yytext); return FLOAT;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 105 "Lexico.l"
-{printf("\nTipo string: %s\n", yytext);}
+#line 107 "Lexico.l"
+{printf("\nTipo string: %s\n", yytext); return STRING;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 107 "Lexico.l"
-{printf("\nInicio declaracion variable: %s\n", yytext);}
+#line 109 "Lexico.l"
+{printf("\nInicio declaracion variable: %s\n", yytext); return INICIARVARIABLE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 108 "Lexico.l"
-{printf("\nDos puntitos: %s\n", yytext);}
+#line 110 "Lexico.l"
+{printf("\nDos puntitos: %s\n", yytext); return DOSPUNTITOS;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 109 "Lexico.l"
-{printf("\nComa: %s\n", yytext);}
+#line 111 "Lexico.l"
+{printf("\nComa: %s\n", yytext); return COMA;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 111 "Lexico.l"
-{printf("\nChisme: %s\n", yytext);}
+#line 113 "Lexico.l"
+{printf("\nChisme: %s\n", yytext); return CHISMECITO;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 113 "Lexico.l"
-{printf("\nAsignacion: %s\n", yytext);}
+#line 115 "Lexico.l"
+{printf("\nAsignacion: %s\n", yytext); return OP_AS;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 115 "Lexico.l"
-{printf("\nSuma: %s\n", yytext);}
+#line 117 "Lexico.l"
+{printf("\nSuma: %s\n", yytext); return OP_SUM;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 116 "Lexico.l"
-{printf("\nMultiplicacion: %s\n", yytext);}
+#line 118 "Lexico.l"
+{printf("\nMultiplicacion: %s\n", yytext); return OP_MUL;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 117 "Lexico.l"
-{printf("\nResta: %s\n", yytext);}
+#line 119 "Lexico.l"
+{printf("\nResta: %s\n", yytext); return OP_RES;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 118 "Lexico.l"
-{printf("\nDivision: %s\n", yytext);}
+#line 120 "Lexico.l"
+{printf("\nDivision: %s\n", yytext); return OP_DIV;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 120 "Lexico.l"
-{printf("\nMayor: %s\n", yytext);}
+#line 122 "Lexico.l"
+{printf("\nMayor: %s\n", yytext); return COMP_MAYOR;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 121 "Lexico.l"
-{printf("\nMenor: %s\n", yytext);}
+#line 123 "Lexico.l"
+{printf("\nMenor: %s\n", yytext); return COMP_MENOR;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 122 "Lexico.l"
-{printf("\nIgual: %s\n", yytext);}
+#line 124 "Lexico.l"
+{printf("\nIgual: %s\n", yytext); return COMP_IGUAL;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 123 "Lexico.l"
-{printf("\nDistinto: %s\n", yytext);}
+#line 125 "Lexico.l"
+{printf("\nDistinto: %s\n", yytext); return COMP_DIST;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 124 "Lexico.l"
-{printf("\nMayor e igual: %s\n", yytext);}
+#line 126 "Lexico.l"
+{printf("\nMayor e igual: %s\n", yytext); return COMP_MAYORIGUAL;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 125 "Lexico.l"
-{printf("\nMenor e igual: %s\n", yytext);}
+#line 127 "Lexico.l"
+{printf("\nMenor e igual: %s\n", yytext); return COMP_MENORIGUAL;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "Lexico.l"
-{printf("\nAnd: %s\n", yytext);}
+#line 129 "Lexico.l"
+{printf("\nAnd: %s\n", yytext); return OP_AND;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 128 "Lexico.l"
-{printf("\nOr: %s\n", yytext);}
+#line 130 "Lexico.l"
+{printf("\nOr: %s\n", yytext); return OP_OR;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 129 "Lexico.l"
-{printf("\nNot: %s\n", yytext);}
+#line 131 "Lexico.l"
+{printf("\nNot: %s\n", yytext); return OP_NOT;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 131 "Lexico.l"
-{printf("\nParAbre: %s\n", yytext);}
+#line 132 "Lexico.l"
+{printf("\nComillas: %s\n", yytext); return COMILLAS;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 132 "Lexico.l"
-{printf("\nParCierra: %s\n", yytext);}
+#line 133 "Lexico.l"
+{printf("\nParAbre: %s\n", yytext); return PA;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 133 "Lexico.l"
-{printf("\nCorAbre: %s\n", yytext);}
+#line 134 "Lexico.l"
+{printf("\nParCierra: %s\n", yytext); return PC;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 134 "Lexico.l"
-{printf("\nCorCierra: %s\n", yytext);}
+#line 135 "Lexico.l"
+{printf("\nCorAbre: %s\n", yytext); return CA;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 135 "Lexico.l"
-{printf("\nLlaAbre: %s\n", yytext);}
+#line 136 "Lexico.l"
+{printf("\nCorCierra: %s\n", yytext); return CC;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 136 "Lexico.l"
-{printf("\nLlaCierra: %s\n", yytext);}
+#line 137 "Lexico.l"
+{printf("\nLlaAbre: %s\n", yytext); return LA;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 138 "Lexico.l"
-{printf("\nwhile: %s\n", yytext);}
+{printf("\nLlaCierra: %s\n", yytext); return LC;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 139 "Lexico.l"
-{printf("\nif: %s\n", yytext);}
+#line 140 "Lexico.l"
+{printf("\nwhile: %s\n", yytext); return WHILE;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 140 "Lexico.l"
-{printf("\nelse: %s\n", yytext);}
+#line 141 "Lexico.l"
+{printf("\nif: %s\n", yytext); return IF;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 141 "Lexico.l"
-{printf("\nread: %s\n", yytext);}
+#line 142 "Lexico.l"
+{printf("\nelse: %s\n", yytext); return ELSE;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 142 "Lexico.l"
-{printf("\nwrite: %s\n", yytext);}
+#line 143 "Lexico.l"
+{printf("\nread: %s\n", yytext); return READ;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 144 "Lexico.l"
-{printf("\nReorder: %s\n", yytext);}
+{printf("\nwrite: %s\n", yytext); return WRITE;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 145 "Lexico.l"
-{printf("\nSliceAndConcat: %s\n", yytext);}
+#line 146 "Lexico.l"
+{printf("\nReorder: %s\n", yytext); return REORDER;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 147 "Lexico.l"
-insertarId(yytext); //{printf("\nIdentificador: %s\n", yytext);}
+{printf("\nSliceAndConcat: %s\n", yytext); return SLICEANDCONCAT;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 149 "Lexico.l"
-
+{insertarId(yytext); return ID;} //{printf("\nIdentificador: %s\n", yytext);}
 	YY_BREAK
 case 40:
-YY_RULE_SETUP
-#line 150 "Lexico.l"
-
-	YY_BREAK
-case 41:
 YY_RULE_SETUP
 #line 151 "Lexico.l"
 
 	YY_BREAK
-case 42:
+case 41:
 YY_RULE_SETUP
 #line 152 "Lexico.l"
 
 	YY_BREAK
-case 43:
+case 42:
 YY_RULE_SETUP
 #line 153 "Lexico.l"
 
 	YY_BREAK
-case 44:
+case 43:
 YY_RULE_SETUP
 #line 154 "Lexico.l"
-{printf( "Error lexico. Caracter no reconocido: %s\n", yytext ); exit (0);}
+
+	YY_BREAK
+case 44:
+YY_RULE_SETUP
+#line 155 "Lexico.l"
+
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 156 "Lexico.l"
+{printf( "Error lexico. Caracter no reconocido: %s\n", yytext ); exit (0);}
+	YY_BREAK
+case 46:
+YY_RULE_SETUP
+#line 158 "Lexico.l"
 ECHO;
 	YY_BREAK
-#line 1014 "lex.yy.c"
+#line 1021 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -1894,7 +1901,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 156 "Lexico.l"
+#line 158 "Lexico.l"
 
 
 int main(int argc, char **argv) {
@@ -1910,8 +1917,11 @@ int main(int argc, char **argv) {
         perror("No se es posible abrir el archivo. \n");
         exit(1);
     }
-
-    yylex();
+    else
+    {
+        yyparse();
+    }
+    /*yylex();*/
     fclose(yyin);
     generarArchivo();
     return 0;
@@ -1930,6 +1940,7 @@ int validarRangoInt(char* cte)
             insertarEnTabla(nombre, "", cte, "");
     } else
         printf("Constante entera invalida: %s\n", cte);
+
 }
 
 int validarRangoFloat(char* cte)
@@ -1945,7 +1956,7 @@ int validarRangoFloat(char* cte)
             insertarEnTabla(nombre, "", cte, "");
     } else
         printf("Constante flotante invalida: %s\n", cte);
-    
+
 }
 
 int validarRangoString(char* cte) {
@@ -1966,6 +1977,7 @@ int validarRangoString(char* cte) {
             insertarEnTabla(nombre, "", cadena, itoa((longitud - 1), auxLongitud, 10));
     } else 
         printf("Constante String invalida: \"%s\"\n", cadena);
+    
 }
 
 int insertarId(char* id) {
