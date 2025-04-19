@@ -1,0 +1,2 @@
+"Esto es una cadena de prueba"
+"Esto es otra cadena"

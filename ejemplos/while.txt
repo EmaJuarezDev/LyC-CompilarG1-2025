@@ -1,8 +1,8 @@
 a := 1
 b := 3
 
-while (a > b)
+MIENTRAS (a MAYOR b)
 {
-    write("a es mas grande que b")
-    a := a + 1
+    DECIR("a es mas grande que b")
+    a := a MAS 1
 }
