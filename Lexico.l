@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
+#include <float.h>
 #include "tablaDeSimbolos.h"
 //#include "y.tab.h"
 
@@ -10,9 +12,10 @@ FILE  *yyin;
 char *yytext;
 
 int yyerror(void);
-int funcionValidarRangoInt(char*);
-int funcionValidarRangoFloat(char*);
-int funcionValidarRangoString(char*);
+int validarRangoInt(char*);
+int validarRangoFloat(char*);
+int validarRangoString(char*);
+int insertarId(char*);
 %}
 
 %option noyywrap  
@@ -26,7 +29,7 @@ SIMBOLOS                [@]
 /*Tipo de datos */
 CTEENTERO		        "-"?{DIGITO}+
 CTENUMEROCONCOMA		"-"?(({DIGITO}+"."{DIGITO}*)|({DIGITO}*"."{DIGITO}+))
-CTETIPOCADENITA			{COMILLAS}({LETRA}|{DIGITO}|{SIMBOLOS}|" ")*{COMILLAS}
+CTETIPOCADENITA			\"[^\"]*\"
 
 INT                     "TIPOENTERO"
 FLOAT                   "TIPONUMEROCONCOMA"
@@ -50,10 +53,10 @@ COMILLAS                "\""
 OP_AS   		        ":="
 
 /*Operadores Aritmeticos */
-OP_SUM		            "+"
-OP_MUL                  "*"
-OP_RES		            "-"
-OP_DIV                  "/"
+OP_SUM		            "MAS"
+OP_MUL                  "POR"
+OP_RES		            "MENOS"
+OP_DIV                  "DIVIDIR"
 
 /*Operadorees Comparacion */
 COMP_MAYOR              "MAYOR"
@@ -87,15 +90,15 @@ WRITE                   "DECIR"
 REORDER                 "MENJUNJE"
 SLICEANDCONCAT          "CORTAYPEGAR"
 
-/*{printf("\nTipo entero: %s\n", yytext);return INT;}*/
+/*{printf("\nTipo numero: %s\n", yytext);return INT;}*/
 /*TODO: Realizar validacion de rango */
 /*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}*/
 /*{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
 
 %%
-{CTEENTERO}			        funcionValidarRangoInt(yytext); //{printf("\nConstante entera: %s\n", yytext);}
-{CTENUMEROCONCOMA}			funcionValidarRangoFloat(yytext); //{printf("\nConstante flotante: %s\n", yytext);}
-{CTETIPOCADENITA}			funcionValidarRangoString(yytext); //{printf("\nConstante string: %s\n", yytext);}
+{CTEENTERO}			        validarRangoInt(yytext); //{printf("\nConstante entera: %s\n", yytext);}
+{CTENUMEROCONCOMA}			validarRangoFloat(yytext); //{printf("\nConstante flotante: %s\n", yytext);}
+{CTETIPOCADENITA}			validarRangoString(yytext); //{printf("\nConstante string: %s\n", yytext);}
 
 {INT}			            {printf("\nTipo int: %s\n", yytext);}
 {FLOAT}			            {printf("\nTipo flotante: %s\n", yytext);}
@@ -141,7 +144,7 @@ SLICEANDCONCAT          "CORTAYPEGAR"
 {REORDER}			        {printf("\nReorder: %s\n", yytext);}
 {SLICEANDCONCAT}			{printf("\nSliceAndConcat: %s\n", yytext);}
 
-{ID}			            {printf("\nIdentificador: %s\n", yytext);}
+{ID}			            insertarId(yytext); //{printf("\nIdentificador: %s\n", yytext);}
 
 "\n"      		
 "\t"
@@ -155,14 +158,14 @@ SLICEANDCONCAT          "CORTAYPEGAR"
 int main(int argc, char **argv) {
     
     if (argc != 2) {
-        fprintf(stderr, "Uso: %s <archivo>. \n", argv[0]);
+        fprintf(stderr, "Uso %s <archivo>. \n", argv[0]);
         exit(1);
     }
 
     yyin = fopen(argv[1], "r");
     
     if (!yyin) {
-        perror("No se pudo abrir el archivo. \n");
+        perror("No se es posible abrir el archivo. \n");
         exit(1);
     }
 
@@ -172,71 +175,63 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-int funcionValidarRangoInt(char* cte)
+int validarRangoInt(char* cte)
 {
-    int entero = atoi(cte);
+    int numero = atoi(cte);
+    char nombre[6];
 
-    if((entero >= (-32768)) && (entero < 32768))
+    if((numero >= (SHRT_MIN)) && (numero <= SHRT_MAX)) {
         printf("Constante entera valida: %s\n", cte);
-    else
+        sprintf(nombre, "_%d", numero);
+
+        if(buscarEnTabla(nombre) == -1)
+            insertarEnTabla(nombre, "", cte, "");
+    } else
         printf("Constante entera invalida: %s\n", cte);
 }
 
-int funcionValidarRangoFloat(char* cte)
+int validarRangoFloat(char* cte)
 {
     float numero = atof(cte);
+    char nombre[41];
 
-    if (numero >= (-3.4e38) && numero <= 3.4e38)
+    if ((numero > FLT_MIN && numero < FLT_MAX) || (numero < (-1 * FLT_MIN) && numero > (-1 * FLT_MAX))) {
         printf("Constante flotante valida: %s\n", cte);
-    else
+        sprintf(nombre, "_%g", numero);
+
+        if(buscarEnTabla(nombre) == -1)
+            insertarEnTabla(nombre, "", cte, "");
+    } else
         printf("Constante flotante invalida: %s\n", cte);
     
 }
 
-int funcionValidarRangoString(char* cte) {
+int validarRangoString(char* cte) {
 
     int longitud = (strlen(cte) - 2);
     char cadena[longitud + 1];
+    char nombre[longitud + 2];
+    char auxLongitud[4];
 
     strncpy(cadena, cte + 1, longitud);
     cadena[longitud] = '\0';
 
-        if (j <= 50) {
-        char nombre[52];
+    if(longitud <= 50) {
+        printf("Constante String valida: \"%s\"\n", cadena);
         sprintf(nombre, "_%s", cadena);
 
-        if(buscarEnTabla(nombre) == -1) {
-			char valor[52];
-			sprintf(valor, "%s", cadena);
-            insertarEnTabla(nombre, "STRING", valor, itoa(strlen(cadena)));
-        }
-
-        printf("Constante String valida: \"%s\"\n", cadena);
+        if(buscarEnTabla(nombre) == -1)
+            insertarEnTabla(nombre, "", cadena, itoa((longitud - 1), auxLongitud, 10));
     } else 
         printf("Constante String invalida: \"%s\"\n", cadena);
 }
 
-/*int funcionValidarRangoString(char* cte) {
-
-    int longitud_original = strlen(cte);
-   
-    char cadena[longitud_original];
-    int i = 1;
-    int j = 0;
- 
-    while (i < longitud_original - 1) {
-        if (cte[i] == '\\' && cte[i+1] == '"') {
-            cadena[j++] = '"';
-            i+=2;
-        } else {
-            cadena[j++] = cte[i++];
-        }
-    }
-    cadena[j] = '\0';
-
-
+int insertarId(char* id) {
     
-    return;
-}*/
+    printf("\nIdentificador: %s\n", yytext);
+    
+    if(buscarEnTabla(id) == -1)
+            insertarEnTabla(id, "", "-", "");
+}
 
 

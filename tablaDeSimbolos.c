@@ -44,8 +44,8 @@ void generarArchivo()
   
     fp = fopen ("tablaDeSimbolos.txt", "w+t");
   
-    fprintf(fp, "\n                NOMBRE              |   TIPODATO    |               VALOR               |   LONGITUD    ");
-    fprintf(fp, "\n________________________________________________________________________________________________________\n");
+    fprintf(fp, "\n                       NOMBRE                       | TIPODATO |                       VALOR                       | LONGITUD ");
+    fprintf(fp, "\n----------------------------------------------------|----------|---------------------------------------------------|----------\n");
   
     size_t i;
   
@@ -53,8 +53,8 @@ void generarArchivo()
 
       t_simbolo *punteroSimbolo = &tablaSimbolos[i];
 
-      fprintf(fp, " %-*s | %-*s | %*s | %*d |\n", 52, punteroSimbolo->nombre,
-        16, punteroSimbolo->tipoDato, 52, punteroSimbolo->valor, 3, punteroSimbolo->longitud);
+      fprintf(fp, "%-*s|%*s|%*s|%*s\n", 52, punteroSimbolo->nombre,
+        10, punteroSimbolo->tipoDato, 51, punteroSimbolo->valor, 10, punteroSimbolo->longitud);
     }
 
     fclose (fp);
