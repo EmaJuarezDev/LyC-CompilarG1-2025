@@ -508,23 +508,28 @@ char *yytext;
 #line 1 "Lexico.l"
 #define INITIAL 0
 #line 2 "Lexico.l"
+#include "y.tab.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <float.h>
 #include "tablaDeSimbolos.h"
-//#include "y.tab.h"
 
-FILE  *yyin;
+#include "funcionesEspeciales.h"
+
+extern FILE  *yyin;
 /*extern yylval;*/
-char *yytext;
+extern char *yytext;
 
 int yyerror(void);
 int validarRangoInt(char*);
 int validarRangoFloat(char*);
 int validarRangoString(char*);
 int insertarId(char*);
+
+int yyparse(void);
+
 /* Conjutos */
 /*Tipo de datos */
 /*Declaración de variables */
@@ -541,7 +546,7 @@ int insertarId(char*);
 /*TODO: Realizar validacion de rango */
 /*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}*/
 /*{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
-#line 545 "lex.yy.c"
+#line 550 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -692,9 +697,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 98 "Lexico.l"
+#line 103 "Lexico.l"
 
-#line 698 "lex.yy.c"
+#line 703 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -787,230 +792,230 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 99 "Lexico.l"
-validarRangoInt(yytext); //{printf("\nConstante entera: %s\n", yytext);}
+#line 104 "Lexico.l"
+{validarRangoInt(yytext);return CTEENTERO;} //{printf("\nConstante entera: %s\n", yytext);}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 100 "Lexico.l"
-validarRangoFloat(yytext); //{printf("\nConstante flotante: %s\n", yytext);}
+#line 105 "Lexico.l"
+{validarRangoFloat(yytext);return CTENUMEROCONCOMA;} //{printf("\nConstante flotante: %s\n", yytext);}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 101 "Lexico.l"
-validarRangoString(yytext); //{printf("\nConstante string: %s\n", yytext);}
+#line 106 "Lexico.l"
+{validarRangoString(yytext);return CTETIPOCADENITA;} //{printf("\nConstante string: %s\n", yytext);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 103 "Lexico.l"
-{printf("\nTipo int: %s\n", yytext);}
+#line 108 "Lexico.l"
+{printf("\nTipo int: %s\n", yytext);return INT;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 104 "Lexico.l"
-{printf("\nTipo flotante: %s\n", yytext);}
+#line 109 "Lexico.l"
+{printf("\nTipo flotante: %s\n", yytext);return FLOAT;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 105 "Lexico.l"
-{printf("\nTipo string: %s\n", yytext);}
+#line 110 "Lexico.l"
+{printf("\nTipo string: %s\n", yytext);return STRING;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 107 "Lexico.l"
-{printf("\nInicio declaracion variable: %s\n", yytext);}
+#line 112 "Lexico.l"
+{printf("\nInicio declaracion variable: %s\n", yytext);return INICIARVARIABLE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 108 "Lexico.l"
-{printf("\nDos puntitos: %s\n", yytext);}
+#line 113 "Lexico.l"
+{printf("\nDos puntitos: %s\n", yytext);return DOSPUNTITOS;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 109 "Lexico.l"
-{printf("\nComa: %s\n", yytext);}
+#line 114 "Lexico.l"
+{printf("\nComa: %s\n", yytext);return COMA;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 111 "Lexico.l"
-{printf("\nChisme: %s\n", yytext);}
+#line 116 "Lexico.l"
+{printf("\nChisme: %s\n", yytext);return CHISMECITO;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 113 "Lexico.l"
-{printf("\nAsignacion: %s\n", yytext);}
+#line 118 "Lexico.l"
+{printf("\nAsignacion: %s\n", yytext);return OP_AS;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 115 "Lexico.l"
-{printf("\nSuma: %s\n", yytext);}
+#line 120 "Lexico.l"
+{printf("\nSuma: %s\n", yytext);return OP_SUM;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 116 "Lexico.l"
-{printf("\nMultiplicacion: %s\n", yytext);}
+#line 121 "Lexico.l"
+{printf("\nMultiplicacion: %s\n", yytext);return OP_MUL;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 117 "Lexico.l"
-{printf("\nResta: %s\n", yytext);}
+#line 122 "Lexico.l"
+{printf("\nResta: %s\n", yytext);return OP_RES;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 118 "Lexico.l"
-{printf("\nDivision: %s\n", yytext);}
+#line 123 "Lexico.l"
+{printf("\nDivision: %s\n", yytext);return OP_DIV;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 120 "Lexico.l"
-{printf("\nMayor: %s\n", yytext);}
+#line 125 "Lexico.l"
+{printf("\nMayor: %s\n", yytext);return COMP_MAYOR;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 121 "Lexico.l"
-{printf("\nMenor: %s\n", yytext);}
+#line 126 "Lexico.l"
+{printf("\nMenor: %s\n", yytext);return COMP_MENOR;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 122 "Lexico.l"
-{printf("\nIgual: %s\n", yytext);}
+#line 127 "Lexico.l"
+{printf("\nIgual: %s\n", yytext);return COMP_IGUAL;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 123 "Lexico.l"
-{printf("\nDistinto: %s\n", yytext);}
+#line 128 "Lexico.l"
+{printf("\nDistinto: %s\n", yytext);return COMP_DIST;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 124 "Lexico.l"
-{printf("\nMayor e igual: %s\n", yytext);}
+#line 129 "Lexico.l"
+{printf("\nMayor e igual: %s\n", yytext);return COMP_MAYORIGUAL;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 125 "Lexico.l"
-{printf("\nMenor e igual: %s\n", yytext);}
+#line 130 "Lexico.l"
+{printf("\nMenor e igual: %s\n", yytext);return COMP_MENORIGUAL;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "Lexico.l"
-{printf("\nAnd: %s\n", yytext);}
+#line 132 "Lexico.l"
+{printf("\nAnd: %s\n", yytext);return OP_AND;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 128 "Lexico.l"
-{printf("\nOr: %s\n", yytext);}
+#line 133 "Lexico.l"
+{printf("\nOr: %s\n", yytext);return OP_OR;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 129 "Lexico.l"
-{printf("\nNot: %s\n", yytext);}
+#line 134 "Lexico.l"
+{printf("\nNot: %s\n", yytext);return OP_NOT;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 131 "Lexico.l"
-{printf("\nParAbre: %s\n", yytext);}
+#line 136 "Lexico.l"
+{printf("\nParAbre: %s\n", yytext);return PA;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 132 "Lexico.l"
-{printf("\nParCierra: %s\n", yytext);}
+#line 137 "Lexico.l"
+{printf("\nParCierra: %s\n", yytext);return PC;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 133 "Lexico.l"
-{printf("\nCorAbre: %s\n", yytext);}
+#line 138 "Lexico.l"
+{printf("\nCorAbre: %s\n", yytext);return CA;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 134 "Lexico.l"
-{printf("\nCorCierra: %s\n", yytext);}
+#line 139 "Lexico.l"
+{printf("\nCorCierra: %s\n", yytext);return CC;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 135 "Lexico.l"
-{printf("\nLlaAbre: %s\n", yytext);}
+#line 140 "Lexico.l"
+{printf("\nLlaAbre: %s\n", yytext);return LA;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 136 "Lexico.l"
-{printf("\nLlaCierra: %s\n", yytext);}
+#line 141 "Lexico.l"
+{printf("\nLlaCierra: %s\n", yytext); return LC;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 138 "Lexico.l"
-{printf("\nwhile: %s\n", yytext);}
+#line 143 "Lexico.l"
+{printf("\nwhile: %s\n", yytext);return WHILE;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 139 "Lexico.l"
-{printf("\nif: %s\n", yytext);}
+#line 144 "Lexico.l"
+{printf("\nif: %s\n", yytext);return IF;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 140 "Lexico.l"
-{printf("\nelse: %s\n", yytext);}
+#line 145 "Lexico.l"
+{printf("\nelse: %s\n", yytext);return ELSE;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 141 "Lexico.l"
-{printf("\nread: %s\n", yytext);}
+#line 146 "Lexico.l"
+{printf("\nread: %s\n", yytext);return READ;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 142 "Lexico.l"
-{printf("\nwrite: %s\n", yytext);}
+#line 147 "Lexico.l"
+{printf("\nwrite: %s\n", yytext);return WRITE;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 144 "Lexico.l"
-{printf("\nReorder: %s\n", yytext);}
+#line 149 "Lexico.l"
+{printf("\nReorder: %s\n", yytext);return REORDER;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 145 "Lexico.l"
-{printf("\nSliceAndConcat: %s\n", yytext);}
+#line 150 "Lexico.l"
+{printf("\nSliceAndConcat: %s\n", yytext);return SLICEANDCONCAT;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 147 "Lexico.l"
-insertarId(yytext); //{printf("\nIdentificador: %s\n", yytext);}
+#line 152 "Lexico.l"
+{insertarId(yytext);return ID;} //{printf("\nIdentificador: %s\n", yytext);}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 149 "Lexico.l"
+#line 154 "Lexico.l"
 
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 150 "Lexico.l"
+#line 155 "Lexico.l"
 
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 151 "Lexico.l"
+#line 156 "Lexico.l"
 
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 152 "Lexico.l"
+#line 157 "Lexico.l"
 
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 153 "Lexico.l"
+#line 158 "Lexico.l"
 
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 154 "Lexico.l"
+#line 159 "Lexico.l"
 {printf( "Error lexico. Caracter no reconocido: %s\n", yytext ); exit (0);}
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 156 "Lexico.l"
+#line 161 "Lexico.l"
 ECHO;
 	YY_BREAK
-#line 1014 "lex.yy.c"
+#line 1019 "lex.yy.c"
 			case YY_STATE_EOF(INITIAL):
 				yyterminate();
 
@@ -1894,86 +1899,9 @@ int main()
 	return 0;
 	}
 #endif
-#line 156 "Lexico.l"
+#line 161 "Lexico.l"
 
 
-int main(int argc, char **argv) {
-    
-    if (argc != 2) {
-        fprintf(stderr, "Uso %s <archivo>. \n", argv[0]);
-        exit(1);
-    }
 
-    yyin = fopen(argv[1], "r");
-    
-    if (!yyin) {
-        perror("No se es posible abrir el archivo. \n");
-        exit(1);
-    }
-
-    yylex();
-    fclose(yyin);
-    generarArchivo();
-    return 0;
-}
-
-int validarRangoInt(char* cte)
-{
-    int numero = atoi(cte);
-    char nombre[6];
-
-    if((numero >= (SHRT_MIN)) && (numero <= SHRT_MAX)) {
-        printf("Constante entera valida: %s\n", cte);
-        sprintf(nombre, "_%d", numero);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "", cte, "");
-    } else
-        printf("Constante entera invalida: %s\n", cte);
-}
-
-int validarRangoFloat(char* cte)
-{
-    float numero = atof(cte);
-    char nombre[41];
-
-    if ((numero > FLT_MIN && numero < FLT_MAX) || (numero < (-1 * FLT_MIN) && numero > (-1 * FLT_MAX))) {
-        printf("Constante flotante valida: %s\n", cte);
-        sprintf(nombre, "_%g", numero);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "", cte, "");
-    } else
-        printf("Constante flotante invalida: %s\n", cte);
-    
-}
-
-int validarRangoString(char* cte) {
-
-    int longitud = (strlen(cte) - 2);
-    char cadena[longitud + 1];
-    char nombre[longitud + 2];
-    char auxLongitud[4];
-
-    strncpy(cadena, cte + 1, longitud);
-    cadena[longitud] = '\0';
-
-    if(longitud <= 50) {
-        printf("Constante String valida: \"%s\"\n", cadena);
-        sprintf(nombre, "_%s", cadena);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "", cadena, itoa((longitud - 1), auxLongitud, 10));
-    } else 
-        printf("Constante String invalida: \"%s\"\n", cadena);
-}
-
-int insertarId(char* id) {
-    
-    printf("\nIdentificador: %s\n", yytext);
-    
-    if(buscarEnTabla(id) == -1)
-            insertarEnTabla(id, "", "-", "");
-}
 
 

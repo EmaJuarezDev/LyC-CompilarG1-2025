@@ -1,5 +1,7 @@
 :: Script para windows
 flex Lexico.l
-gcc tablaDeSimbolos.c lex.yy.c -o lexer
+bison -dyv Sintactico.y
 
-.\lexer .\ejemplos.\assignments.txt
+gcc main.c tablaDeSimbolos.c funcionesEspeciales.c lex.yy.c y.tab.c -o lexer
+
+.\lexer .\ejemplos.\slice.txt
