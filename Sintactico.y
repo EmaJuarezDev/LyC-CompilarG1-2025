@@ -101,6 +101,7 @@ sentencia:
     | sentenciaWrite
     | sentenciaWhile
     | sentenciaSlice
+    | sentenciaReorder
 
 sentenciaAsignacion:
     asignacion {printf(" FIN\n");} ;
@@ -135,6 +136,9 @@ expresion:
     expresion opLogico expresion
     | factor opComparacion factor
     | texto opComparacion texto
+    | factor opArismetico expresion
+    | factor
+
 opLogico:
     OP_AND
     | OP_OR
@@ -206,6 +210,14 @@ parametro:
     ID
     | CTEENTERO
     | CTETIPOCADENITA
+
+sentenciaReorder:
+    reorder {printf(" FIN\n");};
+reorder:
+    ID OP_AS REORDER PA CA listaexpresiones CC COMA CTEENTERO COMA CTEENTERO PC
+listaexpresiones:
+    expresion
+    | listaexpresiones COMA expresion
 %%
 
 

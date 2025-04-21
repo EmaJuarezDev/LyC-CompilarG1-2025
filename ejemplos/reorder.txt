@@ -1,1 +1,7 @@
-x := MENJUNJE([x+3, 1+1, 9-x],1,2)
+x := MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],1,2)
+
+X := MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],0,2)
+
+X := MENJUNJE([z POR x MENOS 2 DIVIDIR 25, x MAS 3, 1 MAS 1, 9 MENOS x],0,2)
+
+X := MENJUNJE([z ,x ,1 , 9 MENOS x],0,2)

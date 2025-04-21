@@ -7,3 +7,4 @@
 #include "y.tab.h"
 
 char* sliceAndConcat(int li, int lf, const char* str1, const char* str2, int enPalabra1);
+
