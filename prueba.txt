@@ -1,2 +1,2 @@
-c:=d*(e-21)/4
+c := d POR (e MENOS 21) DIVIDIR 4
 

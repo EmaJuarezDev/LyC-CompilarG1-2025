@@ -4,7 +4,7 @@ bison -dyv Sintactico.y
 
 gcc.exe main.c tablaDeSimbolos.c funcionesEspeciales.c lex.yy.c y.tab.c -o compilador.exe
 
-compilador.exe ejemplos\write.txt
+compilador.exe prueba.txt
 
 @echo off
 del compilador.exe

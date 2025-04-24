@@ -20,10 +20,12 @@
 %token CTEENTERO
 %token CTENUMEROCONCOMA
 %token CTETIPOCADENITA
+//%token CTETIPOBOOLEANO
 
 %token INT
 %token FLOAT
 %token STRING
+//%token BOOLEAN
 
 /* DECLARACION DE VARIABLES*/
 %token ID
@@ -132,7 +134,9 @@ termino:
 factor:
     ID {printf("\tID es factor. \n");}
     | CTEENTERO {printf("\tCTEENTERO es factor. \n");}
-    | CTENUMEROCONCOMA {printf("\tCTECONCOMA es factor. \n");};
+    | CTENUMEROCONCOMA {printf("\tCTECONCOMA es factor. \n");}
+    | PA expresion PC {printf("\tExpresion es factor. \n");};
+    //| CTEBOOLEANO {printf("\tCTEBOOLEANO es factor. \n");}
  
 sentenciaIf:
     IF PA condicion PC LA sentencia LC {printf("\tIf. \n");}
@@ -172,8 +176,18 @@ sentenciaWhile:
     WHILE PA condicion PC LA programa LC {printf("\tWhile. \n");};
 
 sentenciaSlice:
-    slice {printf("\tFIN\n");};
+    ID OP_AS SLICEANDCONCAT PA listaParametros PC {printf("\tSlice and concat. \n");};
 
+listaParametros:
+    parametroSlice COMA parametroSlice COMA parametroSlice COMA parametroSlice COMA parametroSlice;
+
+parametroSlice:
+    CTEENTERO {printf("\tCTEENTERO es parametro. \n");}
+    | CTETIPOCADENITA {printf("\tCTECADENITA es parametro. \n");};
+    //| CTEBOOLEANO {printf("\tCTEBOOLEANO es parametro. \n");}
+
+/*sentenciaSlice:
+    slice {printf("\tFIN\n");};
 slice:
     ID OP_AS SLICEANDCONCAT PA variables PC
 variables:
@@ -182,15 +196,30 @@ variables:
 parametro:
     ID
     | CTEENTERO
-    | CTETIPOCADENITA
+    | CTETIPOCADENITA*/
 
 sentenciaReorder:
+    REORDER PA listaParametros PC {printf("\tReorder. \n");};
+
+listaParametros:
+     CA listaExpresiones CC COMA parametroReorder COMA parametroReorder;
+
+listaExpresiones:
+    expresion
+    | listaExpresiones COMA expresion;
+
+parametroReorder:
+    CTEENTERO {printf("\tCTEENTERO es parametro. \n");};
+    //| CTEBOOLEANO {printf("\tCTEBOOLEANO es parametro. \n");}
+
+/*sentenciaReorder:
     reorder {printf("\tFIN\n");};
 reorder:
     ID OP_AS REORDER PA CA listaexpresiones CC COMA CTEENTERO COMA CTEENTERO PC
 listaexpresiones:
     expresion
-    | listaexpresiones COMA expresion
+    | listaexpresiones COMA expresion*/
+
 %%
 
 int yyerror(void)
