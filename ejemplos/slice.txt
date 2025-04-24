@@ -1,0 +1,1 @@
+x := CORTAYPEGAR(1, 5, "amarillo", "verde", 0)
