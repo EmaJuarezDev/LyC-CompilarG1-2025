@@ -1,2 +1,111 @@
 c := d POR (e MENOS 21) DIVIDIR 4
 
+a := 1
+b := 1
+c := 2
+
+SI (a MAYOR b YQUEMAS c MAYOR b)
+{
+    DECIR("a es mas grande que b y c es mas grande que b")
+}
+
+x := 27 MENOS c
+x := r MAS 500
+x := 34 POR 3
+x := z DIVIDIR f
+
+a := 99999.99
+a := 99.
+a := .9999
+a := 1.1
+a := 1.1
+a := 1.1
+a := 0.0
+a := 01.1
+a := 1.10
+a := 00000000000000.125
+
+c := 0
+c := 1
+c := 1
+c := 1
+c := 32767
+c := 32768
+c := 01
+c := 0000000000000000000000000012
+
+b := "12345678901234567890123456789012345678901234567890"
+b := "12345678901234567890123456789012345678901234567890x"
+b := "@sdADaSjfla%dfg"
+b := "asldk  fh sjf"
+b := "a"
+b := "a"
+b := "a"
+
+#+ Esto es un comentario +#
+
+SI (a MAYOR b)
+{
+    DECIR("a es mas grande que b")
+}
+SINO
+{
+    DECIR("a es mas chico o igual a b")
+}
+
+ARRANCAACA {
+    a1, b1 : TIPONUMEROCONCOMA
+    variable1 : TIPOENTERO
+    p1, p2, p3 : TIPOCADENITA
+}
+
+a := 1
+b := 1
+c := 2
+
+SI (NOES a MAYOR b)
+{
+    DECIR("a no es mas grande que b")
+}
+
+
+a := 1
+b := 1
+c := 2
+
+SI (a MAYOR b OQUEMAS c MAYOR b)
+{
+    DECIR("a es mas grande que b o c es mas grande que b")
+}
+
+LEER(base) #+ base es una variable +#
+
+MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],1,2)
+
+MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],0,2)
+
+MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],0,3)
+
+MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],1,0)
+
+MENJUNJE([z POR x MENOS 2 DIVIDIR 25, x MAS 3, 1 MAS 1, 9 MENOS x],0,2)
+
+MENJUNJE([z ,x ,1 , 9 MENOS x],0,2)
+
+x := CORTAYPEGAR(1, 5, "amarillo", "verde", 0)
+
+x := CORTAYPEGAR(1, 5, "amarillo", "verde", 0)
+
+a := 1
+b := 3
+
+MIENTRAS (a MAYOR b)
+{
+    DECIR("a es mas grande que b")
+    a := a MAS 1
+}
+
+
+DECIR("ewr")  #+ “ewr” es una cte string +#
+DECIR(var1)  #+ var1 es una variable numérica definida previamente +#
+

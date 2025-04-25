@@ -14,7 +14,7 @@
 
 %}
 
-%start programa
+%start compOkey
 
 /*TIPO DE DATOS*/
 %token CTEENTERO
@@ -81,6 +81,10 @@
 %token SLICEANDCONCAT
 
 %%
+compOkey:
+    programa {printf("\tCompilacion okey. \n");};
+
+
 programa:
     sentencia {printf("\tPrograma. \n");}
     | programa sentencia {printf("\tPrograma. \n");};
@@ -150,12 +154,12 @@ listaIniVar:
     | listaIniVar iniVar;
 
 iniVar:
-    variablesSeguidas DOSPUNTITOS tipo
-    | iniVar variablesSeguidas DOSPUNTITOS tipo;
+    variablesSeguidas DOSPUNTITOS tipo;
+    /*| iniVar variablesSeguidas DOSPUNTITOS tipo;*/
 
 variablesSeguidas:
-    variable
-    | variablesSeguidas COMA variable;
+    ID
+    | variablesSeguidas COMA ID;
 
 variable:
     ID;
@@ -199,9 +203,9 @@ parametro:
     | CTETIPOCADENITA*/
 
 sentenciaReorder:
-    REORDER PA listaParametros PC {printf("\tReorder. \n");};
+    REORDER PA listaParametrosReorder PC {printf("\tReorder. \n");};
 
-listaParametros:
+listaParametrosReorder:
      CA listaExpresiones CC COMA parametroReorder COMA parametroReorder;
 
 listaExpresiones:

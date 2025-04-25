@@ -6,3 +6,47 @@ d                                                   |          |                
 e                                                   |          |                                                  -|          
 _21                                                 |          |                                                 21|          
 _4                                                  |          |                                                  4|          
+a                                                   |          |                                                  -|          
+_1                                                  |          |                                                  1|          
+b                                                   |          |                                                  -|          
+_2                                                  |          |                                                  2|          
+_a es mas grande que b y c es mas grande que b      |          |      a es mas grande que b y c es mas grande que b|        44
+x                                                   |          |                                                  -|          
+_27                                                 |          |                                                 27|          
+r                                                   |          |                                                  -|          
+_500                                                |          |                                                500|          
+_34                                                 |          |                                                 34|          
+_3                                                  |          |                                                  3|          
+z                                                   |          |                                                  -|          
+f                                                   |          |                                                  -|          
+_100000                                             |          |                                           99999.99|          
+_99                                                 |          |                                                99.|          
+_0.9999                                             |          |                                              .9999|          
+_1.1                                                |          |                                                1.1|          
+_0.125                                              |          |                                 00000000000000.125|          
+_0                                                  |          |                                                  0|          
+_32767                                              |          |                                              32767|          
+_12                                                 |          |                       0000000000000000000000000012|          
+_12345678901234567890123456789012345678901234567890 |          | 12345678901234567890123456789012345678901234567890|        49
+_@sdADaSjfla%dfg                                    |          |                                    @sdADaSjfla%dfg|        14
+_asldk  fh sjf                                      |          |                                      asldk  fh sjf|        12
+_a                                                  |          |                                                  a|         0
+_a es mas grande que b                              |          |                              a es mas grande que b|        20
+_a es mas chico o igual a b                         |          |                         a es mas chico o igual a b|        25
+a1                                                  |          |                                                  -|          
+b1                                                  |          |                                                  -|          
+variable1                                           |          |                                                  -|          
+p1                                                  |          |                                                  -|          
+p2                                                  |          |                                                  -|          
+p3                                                  |          |                                                  -|          
+_a no es mas grande que b                           |          |                           a no es mas grande que b|        23
+_a es mas grande que b o c es mas grande que b      |          |      a es mas grande que b o c es mas grande que b|        44
+base                                                |          |                                                  -|          
+_9                                                  |          |                                                  9|          
+j                                                   |          |                                                  -|          
+_25                                                 |          |                                                 25|          
+_5                                                  |          |                                                  5|          
+_amarillo                                           |          |                                           amarillo|         7
+_verde                                              |          |                                              verde|         4
+_ewr                                                |          |                                                ewr|         2
+var1                                                |          |                                                  -|          
