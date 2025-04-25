@@ -143,8 +143,9 @@ factor:
     //| CTEBOOLEANO {printf("\tCTEBOOLEANO es factor. \n");}
  
 sentenciaIf:
-    IF PA condicion PC LA sentencia LC {printf("\tIf. \n");}
-    | IF PA condicion PC LA sentencia LC ELSE LA programa LC {printf("\tIf y else. \n");};
+    IF PA condicion PC LA programa LC {printf("\tIf. \n");}
+    | IF PA condicion PC LA programa LC ELSE LA programa LC {printf("\tIf y else. \n");};
+    
 
 sentenciaInit:
     INICIARVARIABLE LA listaIniVar LC {printf("\tDeclaracion de variables. \n");};
