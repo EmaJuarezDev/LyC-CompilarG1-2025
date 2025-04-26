@@ -16,7 +16,7 @@ int yyerror(void);
 int validarRangoInt(char*);
 int validarRangoFloat(char*);
 int validarRangoString(char*);
-//int validarRangoBoolean(char*);
+/*int validarRangoBoolean(char*);*/
 int insertarId(char*);
 int yylex(void);
 int yyparse(void);
@@ -52,13 +52,13 @@ int validarRangoInt(char* cte) {
     char nombre[6];
 
     if((numero >= 0) && (numero <= SHRT_MAX)) {
-        printf("\nConstante entera valida: %s\n", cte);
+        printf("\nLexico:Constante entera valida: %s\n", cte);
         sprintf(nombre, "_%d", numero);
 
         if(buscarEnTabla(nombre) == -1)
             insertarEnTabla(nombre, "", cte, "");
     } else
-        printf("\nConstante entera invalida: %s\n", cte);
+        printf("\nLexico:Constante entera invalida: %s\n", cte);
 }
 
 int validarRangoFloat(char* cte) {
@@ -66,13 +66,13 @@ int validarRangoFloat(char* cte) {
     char nombre[41];
 
     if ((numero > FLT_MIN && numero < FLT_MAX)) {
-        printf("\nConstante flotante valida: %s\n", cte);
+        printf("\nLexico:Constante flotante valida: %s\n", cte);
         sprintf(nombre, "_%g", numero);
 
         if(buscarEnTabla(nombre) == -1)
             insertarEnTabla(nombre, "", cte, "");
     } else
-        printf("\nConstante flotante invalida: %s\n", cte);
+        printf("\nLexico:Constante flotante invalida: %s\n", cte);
     
 }
 
@@ -87,18 +87,18 @@ int validarRangoString(char* cte) {
     cadena[longitud] = '\0';
 
     if(longitud <= 50) {
-        printf("\nConstante String valida: \"%s\"\n", cadena);
+        printf("\nLexico:Constante String valida: \"%s\"\n", cadena);
         sprintf(nombre, "_%s", cadena);
 
         if(buscarEnTabla(nombre) == -1)
             insertarEnTabla(nombre, "", cadena, itoa((longitud - 1), auxLongitud, 10));
     } else 
-        printf("\nConstante String invalida: \"%s\"\n", cadena);
+        printf("\nLexico:Constante String invalida: \"%s\"\n", cadena);
 }
 
 int insertarId(char* id) {
     
-    printf("\nIdentificador: %s\n", yytext);
+    printf("\nLexico:Identificador: %s\n", yytext);
     
     if(buscarEnTabla(id) == -1)
             insertarEnTabla(id, "", "-", "");
@@ -117,3 +117,4 @@ int insertarId(char* id) {
     } else
         printf("\nConstante booleana invalida: %s\n", cte);
 }*/
+

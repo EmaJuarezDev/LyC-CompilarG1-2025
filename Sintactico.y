@@ -16,12 +16,14 @@
 
 %start compOkey
 
+
+
+
 /*TIPO DE DATOS*/
 %token CTEENTERO
 %token CTENUMEROCONCOMA
 %token CTETIPOCADENITA
-//%token CTETIPOBOOLEANO
-
+/*%token CTEBOOLEANO*/
 %token INT
 %token FLOAT
 %token STRING
@@ -33,12 +35,9 @@
 %token DOSPUNTITOS
 %token COMA
  
-/*Comentarios */
-%token INICHISME
-%token FINCHISME
-%token CHISMECITO
 /*Comillas*/
 %token COMILLAS
+
 /*Operador asignacion */
 %token OP_AS
  
@@ -75,6 +74,8 @@
 %token ELSE
 %token READ
 %token WRITE
+%token FALSO
+%token VERDADERO
  
 /*Funciones adicionales */
 %token REORDER
@@ -82,140 +83,126 @@
 
 %%
 compOkey:
-    programa {printf("\tCompilacion okey. \n");};
+    programa {printf("\tSintactico:Compilacion okey. \n");};
 
 
 programa:
-    sentencia {printf("\tPrograma. \n");}
-    | programa sentencia {printf("\tPrograma. \n");};
+    sentencia {printf("\tSintactico:Programa. \n");}
+    | programa sentencia {printf("\tSintactico:Programa. \n");};
 
 sentencia:
-    sentenciaAsignacion {printf("\tSentencia de asignacion. \n");}
-    | sentenciaIf {printf("\tSentencia If. \n");}
-    | sentenciaInit {printf("\tSentencia Init. \n");}
-    | sentenciaRead {printf("\tSentencia Read. \n");}
-    | sentenciaWrite {printf("\tSentencia Write. \n");}
-    | sentenciaWhile {printf("\tSentencia While. \n");}
-    | sentenciaSlice {printf("\tSentencia Slice. \n");}
-    | sentenciaReorder {printf("\tSentencia Reorder. \n");};
+    sentenciaAsignacion {printf("\tSintactico:Sentencia de asignacion. \n");}
+    | sentenciaIf {printf("\tSintactico:Sentencia If. \n");}
+    | sentenciaInit {printf("\tSintactico:Sentencia Init. \n");}
+    | sentenciaRead {printf("\tSintactico:Sentencia Read. \n");}
+    | sentenciaWrite {printf("\tSintactico:Sentencia Write. \n");}
+    | sentenciaWhile {printf("\tSintactico:Sentencia While. \n");}
+    | sentenciaSlice {printf("\tSintactico:Sentencia Slice. \n");}
+    | sentenciaReorder {printf("\tSintactico:Sentencia Reorder. \n");};
 
 condicion:
-    comparacion {printf("\tCondicion simple. \n");}
-    | comparacion opLogico comparacion {printf("\tCondicion. \n");};
+    comparacion {printf("\tSintactico:Condicion simple. \n");}
+    | comparacion opLogico comparacion {printf("\tSintactico:Condicion. \n");};
 
 opLogico:
-    OP_AND {printf("\tOperador Y. \n");}
-    | OP_OR {printf("\tOperador O. \n");};
+    OP_AND {printf("\tSintactico:Operador Y. \n");}
+    | OP_OR {printf("\tSintactico:Operador O. \n");};
 
 comparacion:
-    factor opComparacion factor {printf("\tComparacion. \n");}
-    | not factor opComparacion factor {printf("\tComparacion negada. \n");};
+    factor opComparacion factor {printf("\tSintactico:Comparacion. \n");}
+    | not factor opComparacion factor {printf("\tSintactico:Comparacion negada. \n");};
 
 not:
-    OP_NOT {printf("\tOperador NO. \n");};
+    OP_NOT {printf("\tSintactico:Operador NO. \n");};
 
 opComparacion:
-    COMP_MAYOR {printf("\tComparador mayor. \n");}
-    | COMP_MENOR {printf("\tComparador menor. \n");};
+    COMP_MAYOR {printf("\tSintactico:Comparador mayor. \n");}
+    | COMP_MENOR {printf("\tSintactico:Comparador menor. \n");}
+    | COMP_MAYORIGUAL {printf("\tSintactico:Comparador mayor igual. \n");}
+    | COMP_MENORIGUAL {printf("\tSintactico:Comparador menor igual. \n");}
+    | COMP_IGUAL {printf("\tSintactico:Comparador igual. \n");}
+    | COMP_DIST {printf("\tSintactico:Comparador distinto. \n");};
 
 sentenciaAsignacion:
-    ID OP_AS expresion {printf("\tAsignacion. \n");}
-    | ID OP_AS texto {printf("\tAsignacion de texto. \n");};
+    ID OP_AS expresion {printf("\tSintactico:Asignacion. \n");}
+    | ID OP_AS texto {printf("\tSintactico:Asignacion de texto. \n");};
 
 texto:
-    CTETIPOCADENITA {printf("\tCTECADENITA es texto. \n");};
+    CTETIPOCADENITA {printf("\tSintactico:CTECADENITA es texto. \n");};
 
 expresion:
     termino
-    | expresion OP_RES termino {printf("\tExpresion de resta. \n");}
-    | expresion OP_SUM termino {printf("\tExpresion de suma. \n");};
+    | expresion OP_RES termino {printf("\tSintactico:Expresion de resta. \n");}
+    | expresion OP_SUM termino {printf("\tSintactico:Expresion de suma. \n");};
 
 termino:
     factor
-    | termino OP_DIV factor {printf("\tTermino de division. \n");}
-    | termino OP_MUL factor {printf("\tTermino de multiplicacion. \n");};
+    | termino OP_DIV factor {printf("\tSintactico:Termino de division. \n");}
+    | termino OP_MUL factor {printf("\tSintactico:Termino de multiplicacion. \n");};
 
 factor:
-    ID {printf("\tID es factor. \n");}
-    | CTEENTERO {printf("\tCTEENTERO es factor. \n");}
-    | CTENUMEROCONCOMA {printf("\tCTECONCOMA es factor. \n");}
-    | PA expresion PC {printf("\tExpresion es factor. \n");};
+    ID {printf("\tSintactico:ID es factor. \n");}
+    | CTEENTERO {printf("\tSintactico:CTEENTERO es factor. \n");}
+    | CTENUMEROCONCOMA {printf("\tSintactico:CTECONCOMA es factor. \n");}
+    | PA expresion PC {printf("\tSintactico:Expresion es factor. \n");};
     //| CTEBOOLEANO {printf("\tCTEBOOLEANO es factor. \n");}
  
 sentenciaIf:
-    IF PA condicion PC LA programa LC {printf("\tIf. \n");}
-    | IF PA condicion PC LA programa LC ELSE LA programa LC {printf("\tIf y else. \n");};
+    IF PA condicion PC LA programa LC {printf("\tSintactico:If. \n");}
+    | IF PA condicion PC LA programa LC ELSE LA programa LC {printf("\tSintactico:If y else. \n");};
     
-
 sentenciaInit:
-    INICIARVARIABLE LA listaIniVar LC {printf("\tDeclaracion de variables. \n");};
+    INICIARVARIABLE LA listaIniVar LC {printf("\tSintactico:Declaracion de variables. \n");};
 
 listaIniVar:
-    iniVar
-    | listaIniVar iniVar;
+    iniVar {printf("\tSintactico:Una linea de tipo. \n");}
+    | listaIniVar iniVar {printf("\tSintactico:Varias lineas de tipo. \n");};
 
 iniVar:
-    variablesSeguidas DOSPUNTITOS tipo;
-    /*| iniVar variablesSeguidas DOSPUNTITOS tipo;*/
+    variablesSeguidas DOSPUNTITOS tipo {printf("\tSintactico:Declaracion de tipo. \n");};
 
 variablesSeguidas:
-    ID
-    | variablesSeguidas COMA ID;
+    ID {printf("\tSintactico:Una variable. \n");}
+    | variablesSeguidas COMA ID {printf("\tSintactico:Mas de una variable. \n");};
 
-variable:
-    ID;
 
 tipo:
-    INT
-    | FLOAT
-    | STRING;
+    INT {printf("\tSintactico:Tipo entero. \n");}
+    | FLOAT {printf("\tSintactico:Tipo flotante. \n");}
+    | STRING {printf("\tSintactico:Tipo string. \n");};
  
 sentenciaRead:
-    READ PA ID PC {printf("\tRead. \n");};
+    READ PA ID PC {printf("\tSintactico:Read. \n");};
 
 sentenciaWrite:
-    WRITE PA ID PC {printf("\tWrite de variable. \n");}
-    | WRITE PA texto PC {printf("\tWrite de texto. \n");};
+    WRITE PA ID PC {printf("\tSintactico:Write de variable. \n");}
+    | WRITE PA texto PC {printf("\tSintactico:Write de texto. \n");};
  
 sentenciaWhile:
-    WHILE PA condicion PC LA programa LC {printf("\tWhile. \n");};
+    WHILE PA condicion PC LA programa LC {printf("\tSintactico:While. \n");};
 
 sentenciaSlice:
-    ID OP_AS SLICEANDCONCAT PA listaParametros PC {printf("\tSlice and concat. \n");};
+    ID OP_AS SLICEANDCONCAT PA listaParametros PC {printf("\tSintactico:Slice and concat. \n");};
 
 listaParametros:
-    parametroSlice COMA parametroSlice COMA parametroSlice COMA parametroSlice COMA parametroSlice;
-
-parametroSlice:
-    CTEENTERO {printf("\tCTEENTERO es parametro. \n");}
-    | CTETIPOCADENITA {printf("\tCTECADENITA es parametro. \n");};
-    //| CTEBOOLEANO {printf("\tCTEBOOLEANO es parametro. \n");}
-
-/*sentenciaSlice:
-    slice {printf("\tFIN\n");};
-slice:
-    ID OP_AS SLICEANDCONCAT PA variables PC
-variables:
-    parametro
-    | variables COMA parametro
-parametro:
-    ID
-    | CTEENTERO
-    | CTETIPOCADENITA*/
+    CTEENTERO COMA CTEENTERO COMA CTETIPOCADENITA COMA CTETIPOCADENITA COMA FALSO
+        {printf("\tSintactico:Lista de parametros del slice and concat. \n");} |
+    CTEENTERO COMA CTEENTERO COMA CTETIPOCADENITA COMA CTETIPOCADENITA COMA VERDADERO 
+        {printf("\tSintactico:Lista de parametros del slice and concat. \n");};
 
 sentenciaReorder:
-    REORDER PA listaParametrosReorder PC {printf("\tReorder. \n");};
+    REORDER PA listaParametrosReorder PC {printf("\tSintactico:Reorder. \n");}
 
 listaParametrosReorder:
-     CA listaExpresiones CC COMA parametroReorder COMA parametroReorder;
+     CA listaExpresiones CC COMA VERDADERO COMA CTEENTERO
+        {printf("\tSintactico:Lista de parametros de reorder. \n");} |
+    CA listaExpresiones CC COMA FALSO COMA CTEENTERO
+        {printf("\tSintactico:Lista de parametros de reorder. \n");};
 
 listaExpresiones:
-    expresion
-    | listaExpresiones COMA expresion;
+    expresion {printf("\tSintactico:Expresion. \n");}
+    | listaExpresiones COMA expresion {printf("\tSintactico:Expresiones. \n");};
 
-parametroReorder:
-    CTEENTERO {printf("\tCTEENTERO es parametro. \n");};
-    //| CTEBOOLEANO {printf("\tCTEBOOLEANO es parametro. \n");}
 
 /*sentenciaReorder:
     reorder {printf("\tFIN\n");};

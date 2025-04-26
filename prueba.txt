@@ -68,6 +68,30 @@ SI (NOES a MAYOR b)
     DECIR("a no es mas grande que b")
 }
 
+SI (NOES a MAYORIGUAL b)
+{
+    DECIR("a no es mas grande que b")
+}
+
+SI (NOES a MENORIGUAL b)
+{
+    DECIR("a no es mas grande que b")
+}
+
+SI (NOES a DISTINTASO b)
+{
+    DECIR("a no es mas grande que b")
+}
+
+SI (NOES a IGUALA b)
+{
+    DECIR("a no es mas grande que b")
+}
+
+SI (NOES a MENOR b)
+{
+    DECIR("a no es mas grande que b")
+}
 
 a := 1
 b := 1
@@ -80,21 +104,21 @@ SI (a MAYOR b OQUEMAS c MAYOR b)
 
 LEER(base) #+ base es una variable +#
 
-MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],1,2)
+MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],VERDADERO,2)
 
-MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],0,2)
+MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,2)
 
-MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],0,3)
+MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,3)
 
-MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],1,0)
+MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],VERDADERO,0)
 
-MENJUNJE([z POR x MENOS 2 DIVIDIR 25, x MAS 3, 1 MAS 1, 9 MENOS x],0,2)
+MENJUNJE([z POR x MENOS 2 DIVIDIR 25, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,2)
 
-MENJUNJE([z ,x ,1 , 9 MENOS x],0,2)
+MENJUNJE([z ,x ,1 , 9 MENOS x],FALSO,2)
 
-x := CORTAYPEGAR(1, 5, "amarillo", "verde", 0)
+x := CORTAYPEGAR(1, 5, "amarillo", "verde", FALSO)
 
-x := CORTAYPEGAR(1, 5, "amarillo", "verde", 0)
+x := CORTAYPEGAR(1, 5, "amarillo", "verde", VERDADERO)
 
 a := 1
 b := 3
