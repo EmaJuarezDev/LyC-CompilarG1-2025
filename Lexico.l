@@ -1,18 +1,25 @@
 %{
+#include "y.tab.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <float.h>
+#include "tablaDeSimbolos.h"
 
-//#include "y.tab.h"
-FILE  *yyin;
-char *yytext;
+#include "funcionesEspeciales.h"
 
+extern FILE  *yyin;
+/*extern yylval;*/
+extern char *yytext;
 
 int yyerror(void);
+int validarRangoInt(char*);
+int validarRangoFloat(char*);
+int validarRangoString(char*);
+int insertarId(char*);
 
-int funcionValidarRangoInt(char*);
-int funcionValidarRangoFloat(char*);
-int funcionValidarRangoString(char*);
-
+int yyparse(void);
 
 %}
 
@@ -24,17 +31,22 @@ DIGITO			        [0-9]
 LETRA			        [a-zA-Z]
 
 /*Tipo de datos */
+/*CTEBOOLEANO             {1|0}*/
 CTEENTERO		        {DIGITO}+
-CTENUMEROCONCOMA		{DIGITO}+"."{DIGITO}*|{DIGITO}*"."{DIGITO}+
-CTETIPOCADENITA			\"[^"]*\"
+CTENUMEROCONCOMA		(({DIGITO}+"."{DIGITO}*)|({DIGITO}*"."{DIGITO}+))
+CTETIPOCADENITA			\"[^\"]*\"
+
+FALSO                   "FALSO"
+VERDADERO               "VERDADERO"
+
 
 INT                     "TIPOENTERO"
 FLOAT                   "TIPONUMEROCONCOMA"
 STRING                  "TIPOCADENITA"
-
+/*BOOL                  "TIPOBOOLEANO"*/
 
 /*Declaración de variables */
-ID                      {LETRA}({LETRA}|{DIGITO})*
+ID                      [a-z]({LETRA}|{DIGITO})*
 INICIARVARIABLE         "ARRANCAACA"
 DOSPUNTITOS             ":"
 COMA                    ","
@@ -44,15 +56,17 @@ INICHISME               "#+"
 FINCHISME               "+#"
 CHISMECITO              {INICHISME}[^+#]*{FINCHISME}
 
+/*Cadenas*/
+COMILLAS                "\""
 
 /*Operador asignacion */
-OP_AS   		        "="
+OP_AS   		        ":="
 
 /*Operadores Aritmeticos */
-OP_SUM		            "+"
-OP_MUL                  "*"
-OP_RES		            "-"
-OP_DIV                  "/"
+OP_SUM		            "MAS"
+OP_MUL                  "POR"
+OP_RES		            "MENOS"
+OP_DIV                  "DIVIDIR"
 
 /*Operadorees Comparacion */
 COMP_MAYOR              "MAYOR"
@@ -86,97 +100,77 @@ WRITE                   "DECIR"
 REORDER                 "MENJUNJE"
 SLICEANDCONCAT          "CORTAYPEGAR"
 
-
-
-/*{printf("\nTipo entero: %s\n", yytext);return INT;}*/
+/*{printf("\nTipo numero: %s\n", yytext);return INT;}*/
 /*TODO: Realizar validacion de rango */
-/*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}
-{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
-
+/*{INICHISME}                 {printf("\nInicio comentario: %s\n", yytext);return ID;}*/
+/*{FINCHISME}                 {printf("\nFin comentario: %s\n", yytext);return ID;} */
+/*{CTEBOOLEANO}                 {validarRangoBoolean(yytext);return CTETIPOBOOLEANO;}*/
+/*{BOOLEAN}                     {printf("\nTipo boolean: %s\n", yytext);return BOOLEAN;}*/
+/*{CTEBOOLEANO}               {validarRangoBoolean(yytext);return CTEBOOLEANO;}*/
+/*{CTEBOOLEANO}               {validarRangoBoolean(yytext);return CTEBOOLEANO;}*/
 
 %%
+{CTEENTERO}			        {validarRangoInt(yytext); return CTEENTERO;} //{printf("\nConstante entera: %s\n", yytext);}
+{CTENUMEROCONCOMA}			{validarRangoFloat(yytext); return CTENUMEROCONCOMA;} //{printf("\nConstante flotante: %s\n", yytext);}
+{CTETIPOCADENITA}			{validarRangoString(yytext); return CTETIPOCADENITA;} //{printf("\nConstante string: %s\n", yytext);}
+{FALSO}			            {printf("\nLexico:Falso: %s\n", yytext); return FALSO;}
+{VERDADERO}			        {printf("\nLexico:Verdadero: %s\n", yytext); return VERDADERO;}
 
 
-{CTEENTERO}			        {printf("\nConstante entera: %s\n", yytext);}
-{CTENUMEROCONCOMA}			{printf("\nConstante flotante: %s\n", yytext);}
-{CTETIPOCADENITA}			{printf("\nConstante string: %s\n", yytext);}
+{INT}			            {printf("\nLexico:Tipo int: %s\n", yytext); return INT;}
+{FLOAT}			            {printf("\nLexico:Tipo flotante: %s\n", yytext); return FLOAT;}
+{STRING}			        {printf("\nLexico:Tipo string: %s\n", yytext); return STRING;}
 
-{INT}			            {printf("\nTipo int: %s\n", yytext);}
-{FLOAT}			            {printf("\nTipo flotante: %s\n", yytext);}
-{STRING}			        {printf("\nTipo string: %s\n", yytext);}
+{INICIARVARIABLE}           {printf("\nLexico:Inicio declaracion variable: %s\n", yytext); return INICIARVARIABLE;}
+{DOSPUNTITOS}               {printf("\nLexico:Dos puntitos: %s\n", yytext); return DOSPUNTITOS;}
+{COMA}                      {printf("\nLexico:Coma: %s\n", yytext); return COMA;}
 
-{ID}			            {printf("\nIdentificador: %s\n", yytext);}
-{INICIARVARIABLE}           {printf("\nInicio declaracion variable: %s\n", yytext);}
-{DOSPUNTITOS}               {printf("\nDos puntitos: %s\n", yytext);}
-{COMA}                      {printf("\nComa: %s\n", yytext);}
+{CHISMECITO}                
 
-{CHISMECITO}                {}
+{OP_AS}			            {printf("\nLexico:Asignacion: %s\n", yytext); return OP_AS;}
 
+{OP_SUM}		            {printf("\nLexico:Suma: %s\n", yytext); return OP_SUM;}
+{OP_MUL}		            {printf("\nLexico:Multiplicacion: %s\n", yytext); return OP_MUL;}
+{OP_RES}		            {printf("\nLexico:Resta: %s\n", yytext); return OP_RES;}
+{OP_DIV}		            {printf("\nLexico:Division: %s\n", yytext); return OP_DIV;}
 
-{OP_AS}			            {printf("\nAsignacion: %s\n", yytext);}
+{COMP_MAYOR}		        {printf("\nLexico:Mayor: %s\n", yytext); return COMP_MAYOR;}
+{COMP_MENOR}		        {printf("\nLexico:Menor: %s\n", yytext); return COMP_MENOR;}
+{COMP_IGUAL}		        {printf("\nLexico:Igual: %s\n", yytext); return COMP_IGUAL;}
+{COMP_DIST}		            {printf("\nLexico:Distinto: %s\n", yytext); return COMP_DIST;}
+{COMP_MAYORIGUAL}		    {printf("\nLexico:Mayor e igual: %s\n", yytext); return COMP_MAYORIGUAL;}
+{COMP_MENORIGUAL}		    {printf("\nLexico:Menor e igual: %s\n", yytext); return COMP_MENORIGUAL;}
 
+{OP_AND}		            {printf("\nLexico:And: %s\n", yytext); return OP_AND;}
+{OP_OR}		                {printf("\nLexico:Or: %s\n", yytext); return OP_OR;}
+{OP_NOT}		            {printf("\nLexico:Not: %s\n", yytext); return OP_NOT;}
 
-{OP_SUM}		            {printf("\nSuma: %s\n", yytext);}
-{OP_MUL}		            {printf("\nMultiplicacion: %s\n", yytext);}
-{OP_RES}		            {printf("\nResta: %s\n", yytext);}
-{OP_DIV}		            {printf("\nDivision: %s\n", yytext);}
+{PA}			            {printf("\nLexico:ParAbre: %s\n", yytext); return PA;}
+{PC}			            {printf("\nLexico:ParCierra: %s\n", yytext); return PC;}
+{CA}			            {printf("\nLexico:CorAbre: %s\n", yytext); return CA;}
+{CC}			            {printf("\nLexico:CorCierra: %s\n", yytext); return CC;}
+{LA}			            {printf("\nLexico:LlaAbre: %s\n", yytext); return LA;}
+{LC}			            {printf("\nLexico:LlaCierra: %s\n", yytext); return LC;}
 
+{WHILE}			            {printf("\nLexico:while: %s\n", yytext); return WHILE;}
+{IF}			            {printf("\nLexico:if: %s\n", yytext); return IF;}
+{ELSE}			            {printf("\nLexico:else: %s\n", yytext); return ELSE;}
+{READ}			            {printf("\nLexico:read: %s\n", yytext); return READ;}
+{WRITE}			            {printf("\nLexico:write: %s\n", yytext); return WRITE;}
 
-{COMP_MAYOR}		        {printf("\nMayor: %s\n", yytext);}
-{COMP_MENOR}		        {printf("\nMenor: %s\n", yytext);}
-{COMP_IGUAL}		        {printf("\nIgual: %s\n", yytext);}
-{COMP_DIST}		            {printf("\nDistinto: %s\n", yytext);}
-{COMP_MAYORIGUAL}		    {printf("\nMayor e igual: %s\n", yytext);}
-{COMP_MENORIGUAL}		    {printf("\nMenor e igual: %s\n", yytext);}
+{REORDER}			        {printf("\nLexico:Reorder: %s\n", yytext); return REORDER;}
+{SLICEANDCONCAT}			{printf("\nLexico:SliceAndConcat: %s\n", yytext); return SLICEANDCONCAT;}
 
-
-{OP_AND}		            {printf("\nAnd: %s\n", yytext);}
-{OP_OR}		                {printf("\nOr: %s\n", yytext);}
-{OP_NOT}		            {printf("\nNot: %s\n", yytext);}
-
-
-
-{PA}			            {printf("\nParAbre: %s\n", yytext);}
-{PC}			            {printf("\nParCierra: %s\n", yytext);}
-{CA}			            {printf("\nCorAbre: %s\n", yytext);}
-{CC}			            {printf("\nCorCierra: %s\n", yytext);}
-{LA}			            {printf("\nLlaCierra: %s\n", yytext);}
-{LC}			            {printf("\nLlaCierra: %s\n", yytext);}
-
-
-{WHILE}			            {printf("\nMientras: %s\n", yytext);}
-{IF}			            {printf("\nSi: %s\n", yytext);}
-{ELSE}			            {printf("\nSino: %s\n", yytext);}
-{READ}			            {printf("\nLeer: %s\n", yytext);}
-{WRITE}			            {printf("\nDecir: %s\n", yytext);}
-
-
-{REORDER}			        {printf("\nReorder: %s\n", yytext);}
-{SLICEANDCONCAT}			{printf("\nSliceAndConcat: %s\n", yytext);}
+{ID}			            {insertarId(yytext); return ID;} //{printf("\nIdentificador: %s\n", yytext);}
 
 "\n"      		
 "\t"
 "\n\t"
 " "             		
 "\r\n"
-.			 { printf( "ERROR LEXICO : Caracter no reconocido: %s\n", yytext ); exit (0);}
-
+.			                {printf( "\nError lexico. Caracter no reconocido: %s\n", yytext ); exit (0);}
 %%
 
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "Uso: %s <archivo>\n", argv[0]);
-        exit(1);
-    }
 
-    yyin = fopen(argv[1], "r");
-    if (!yyin) {
-        perror("No se pudo abrir el archivo");
-        exit(1);
-    }
 
-    yylex();
-    fclose(yyin);
-    return 0;
-}

@@ -2,7 +2,7 @@ a := 1
 b := 1
 c := 2
 
-if (NOT a > b)
+SI (NOES a MAYOR b)
 {
-    write("a no es mas grande que b")
+    DECIR("a no es mas grande que b")
 }
