@@ -42,7 +42,7 @@ void generarArchivo()
 {
     FILE *fp;
   
-    fp = fopen ("tablaDeSimbolos.txt", "w+t");
+    fp = fopen ("symbol-table.txt", "w+t");
   
     fprintf(fp, "\n                       NOMBRE                       | TIPODATO |                       VALOR                       | LONGITUD ");
     fprintf(fp, "\n----------------------------------------------------|----------|---------------------------------------------------|----------\n");

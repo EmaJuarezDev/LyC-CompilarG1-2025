@@ -16,7 +16,6 @@ int yyerror(void);
 int validarRangoInt(char*);
 int validarRangoFloat(char*);
 int validarRangoString(char*);
-/*int validarRangoBoolean(char*);*/
 int insertarId(char*);
 int yylex(void);
 int yyparse(void);
@@ -57,8 +56,10 @@ int validarRangoInt(char* cte) {
 
         if(buscarEnTabla(nombre) == -1)
             insertarEnTabla(nombre, "", cte, "");
-    } else
-        printf("\nLexico:Constante entera invalida: %s\n", cte);
+    } else {
+        printf( "\nError lexico. Constante entera invalida: %s\n", yytext ); 
+        exit (0);
+    }
 }
 
 int validarRangoFloat(char* cte) {
@@ -71,8 +72,10 @@ int validarRangoFloat(char* cte) {
 
         if(buscarEnTabla(nombre) == -1)
             insertarEnTabla(nombre, "", cte, "");
-    } else
-        printf("\nLexico:Constante flotante invalida: %s\n", cte);
+    } else {
+        printf( "\nError lexico. Constante flotante invalida: %s\n", yytext ); 
+        exit (0);
+    }
     
 }
 
@@ -92,8 +95,10 @@ int validarRangoString(char* cte) {
 
         if(buscarEnTabla(nombre) == -1)
             insertarEnTabla(nombre, "", cadena, itoa((longitud - 1), auxLongitud, 10));
-    } else 
-        printf("\nLexico:Constante String invalida: \"%s\"\n", cadena);
+    } else {
+        printf( "\nError lexico. Constante String invalida: %s\n", yytext ); 
+        exit (0);
+    }
 }
 
 int insertarId(char* id) {
@@ -103,18 +108,4 @@ int insertarId(char* id) {
     if(buscarEnTabla(id) == -1)
             insertarEnTabla(id, "", "-", "");
 }
-
-/*int validarRangoBoolean(char* cte) {
-    int numero = atoi(cte);
-    char nombre[2];
-
-    if((numero == 0) && (numero == 1)) {
-        printf("\nConstante booleana valida: %s\n", cte);
-        sprintf(nombre, "_%d", numero);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "", cte, "");
-    } else
-        printf("\nConstante booleana invalida: %s\n", cte);
-}*/
 
