@@ -1,135 +1,157 @@
-c := d POR (e MENOS 21) DIVIDIR 4
+#+ Declaracion de variables +#
 
-a := 1
-b := 1
-c := 2
+    ARRANCAACA {
+        a1, b1 : TIPONUMEROCONCOMA
+        variable1: TIPOENTERO
+        p1, p2, p3 : TIPOCADENITA
+    }
 
-SI (a MAYOR b YQUEMAS c MAYOR b)
-{
-    DECIR("a es mas grande que b y c es mas grande que b")
-}
+#+ Operadores aritmeticos +#
 
-x := 27 MENOS c
-x := r MAS 500
-x := 34 POR 3
-x := z DIVIDIR f
+    x := 27 MENOS c
 
-a := 99999.99
-a := 99.
-a := .9999
-a := 1.1
-a := 1.1
-a := 1.1
-a := 0.0
-a := 01.1
-a := 1.10
-a := 00000000000000.125
+    x := r MAS 500
 
-c := 0
-c := 1
-c := 1
-c := 1
-c := 32767
-c := 32768
-c := 01
-c := 0000000000000000000000000012
+    x := 34 POR 3
 
-b := "12345678901234567890123456789012345678901234567890"
-b := "12345678901234567890123456789012345678901234567890x"
-b := "@sdADaSjfla%dfg"
-b := "asldk  fh sjf"
-b := "a"
-b := "a"
-b := "a"
+    x := z DIVIDIR f
+
+#+ Uso de parentesis +#
+
+    c := d POR (e MENOS 21) DIVIDIR 4
+
+#+ Asignaciones+#
+
+    #+ Flotantes +#
+
+        a := 99999.99
+        a := 99.
+        a := .9999
+
+        a := 1.1
+        a := 340200000000000000000000000000000000000.0
+        #+ a := 340300000000000000000000000000000000000.0 Esta línea de código genera un error léxico: Constante flotante 
+            inválida, porque está fuera de rango. +#
+        a := 0.00000000000000000000000000000000000001176
+        #+ a := 0.00000000000000000000000000000000000001175 Esta línea de código genera un error léxico: Constante flotante 
+            inválida, porque está fuera de rango. +#
+        a := 01.1
+        a := 1.10
+        a := 00000000000000.125
+
+    #+ Enteros +#
+
+        c := 0
+        c := 1
+        c := 32767
+        #+ c := 32768 Esta línea de código genera un error léxico: Constante entera inválida, porque está fuera de rango. +#
+        c := 00000000000000125
+
+    #+ Strings +#
+
+        b := "@sdADaSjfla%dfg"
+        b := "asldk  fh sjf"
+
+        b := "12345678901234567890123456789012345678901234567890"
+        #+ b := "12345678901234567890123456789012345678901234567890x" Esta línea de código genera un error léxico: Constante 
+            String inválida, porque está fuera de rango. +#
+        b := "a"
 
 #+ Esto es un comentario +#
 
-SI (a MAYOR b)
-{
-    DECIR("a es mas grande que b")
-}
-SINO
-{
-    DECIR("a es mas chico o igual a b")
-}
+#+ Seleccion +#
 
-ARRANCAACA {
-    a1, b1 : TIPONUMEROCONCOMA
-    variable1 : TIPOENTERO
-    p1, p2, p3 : TIPOCADENITA
-}
+    SI (a MAYOR b)
+    {
+        DECIR("a es mas grande que b")
+    }
+    SINO
+    {
+        DECIR("a es mas chico o igual a b")
+    }
 
-a := 1
-b := 1
-c := 2
+#+ Comparadores +#
 
-SI (NOES a MAYOR b)
-{
-    DECIR("a no es mas grande que b")
-}
+    SI (a MAYORIGUAL b)
+    {
+        DECIR("a no es mas grande que b")
+    }
 
-SI (NOES a MAYORIGUAL b)
-{
-    DECIR("a no es mas grande que b")
-}
+    SI (a MENORIGUAL b)
+    {
+        DECIR("a no es mas grande que b")
+    }
 
-SI (NOES a MENORIGUAL b)
-{
-    DECIR("a no es mas grande que b")
-}
+    SI (a DISTINTASO b)
+    {
+        DECIR("a no es mas grande que b")
+    }
 
-SI (NOES a DISTINTASO b)
-{
-    DECIR("a no es mas grande que b")
-}
+    SI (a IGUALA b)
+    {
+        DECIR("a no es mas grande que b")
+    }
 
-SI (NOES a IGUALA b)
-{
-    DECIR("a no es mas grande que b")
-}
+    SI (a MENOR b)
+    {
+        DECIR("a no es mas grande que b")
+    }
 
-SI (NOES a MENOR b)
-{
-    DECIR("a no es mas grande que b")
-}
+#+ Operadores lógicos +#
 
-a := 1
-b := 1
-c := 2
+    a := 1
+    b := 1
+    c := 2
 
-SI (a MAYOR b OQUEMAS c MAYOR b)
-{
-    DECIR("a es mas grande que b o c es mas grande que b")
-}
+    SI (a MAYOR b YQUEMAS c MAYOR b)
+    {
+        DECIR("a es mas grande que b y c es mas grande que b")
+    }
 
-LEER(base) #+ base es una variable +#
+    SI (a MAYOR b OQUEMAS c MAYOR b)
+    {
+        DECIR("a es mas grande que b o c es mas grande que b")
+    }
 
-MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],VERDADERO,2)
+    SI (NOES a MAYOR b)
+    {
+        DECIR("a no es mas grande que b")
+    }
 
-MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,2)
+#+ Entrada +#
 
-MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,3)
+    LEER(base) #+ base es una variable +#
 
-MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],VERDADERO,0)
+#+ Funcion especiales+#
 
-MENJUNJE([z POR x MENOS 2 DIVIDIR 25, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,2)
+    #+ reorder +#
 
-MENJUNJE([z ,x ,1 , 9 MENOS x],FALSO,2)
+        MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],VERDADERO,2)
 
-x := CORTAYPEGAR(1, 5, "amarillo", "verde", FALSO)
+        MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,2)
 
-x := CORTAYPEGAR(1, 5, "amarillo", "verde", VERDADERO)
+        MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,3)
 
-a := 1
-b := 3
+        MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],VERDADERO,0)
 
-MIENTRAS (a MAYOR b)
-{
-    DECIR("a es mas grande que b")
-    a := a MAS 1
-}
+    #+sliceAndConcat +#
 
+        x := CORTAYPEGAR(1, 5, "amarillo", "verde", FALSO)
 
-DECIR("ewr")  #+ “ewr” es una cte string +#
-DECIR(var1)  #+ var1 es una variable numérica definida previamente +#
+        x := CORTAYPEGAR(1, 5, "amarillo", "verde", VERDADERO)
 
+#+ Iteracion +#
+
+    a := 1
+    b := 3
+
+    MIENTRAS (a MAYOR b)
+    {
+        DECIR("a es mas grande que b")
+        a := a MAS 1
+    }
+
+#+ Salida +#
+
+    DECIR("ewr")  #+ “ewr” es una cte string +#
+    DECIR(var1)  #+ var1 es una variable numérica definida de previamente +#

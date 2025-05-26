@@ -7,7 +7,7 @@ gcc.exe main.c tablaDeSimbolos.c funcionesEspeciales.c lex.yy.c y.tab.c -o lyc-c
 lyc-compiler-1.0.0.exe test.txt
 
 @echo off
-del lyc-compiler-1.0.0.exe
+lyc-compiler-1.0.0.exe
 del lex.yy.c
 del y.tab.c
 del y.tab.h
