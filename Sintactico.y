@@ -24,7 +24,7 @@ char* quitarCom(char*);
 void generarPolInv();
 
 //Variables auxiliares:
-char vectorPolInv[500][53];
+char vectorPolInv[1000][53];
 int pilaPolInv[50];
 char cadenaAux[5];
 int posicionAct = 0, topePil = -1, posicion = -1;
@@ -261,17 +261,20 @@ listaParametros:
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BLT");
+            insertarPolInv("BLE");
             insertarPolInv(itoa(posicionAct + 3, cadenaAux, 10));
             insertarPolInv("BI");
             apilarPos(posicionAct);
             avanzar();
+            //Inicio de rama verdadera del if(@ord == 1)
             insertarPolInv($5);
             insertarPolInv("@pal1");
             insertarPolInv(":=");
             insertarPolInv($7);
             insertarPolInv("@pal2");
             insertarPolInv(":=");
+            //Fin de rama verdadera del if(@ord == 1)
+            //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("-");
@@ -285,7 +288,7 @@ listaParametros:
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BGE");
+            insertarPolInv("BGT");
             apilarPos(posicionAct);
             avanzar();
             insertarPolInv("@tem[@pos]");
@@ -311,7 +314,7 @@ listaParametros:
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
-            insertarPolInv("@pal2");
+            insertarPolInv("@pal2[@pos]");
             insertarPolInv("'\\0'");
             insertarPolInv("CMP");
             insertarPolInv("BEQ");
@@ -375,19 +378,22 @@ listaParametros:
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BLT");
+            insertarPolInv("BLE");
             insertarPolInv(itoa(posicionAct + 3, cadenaAux, 10));
             insertarPolInv("BI");
             apilarPos(posicionAct);
             avanzar();
+            //Inicio de rama falsa del if(@ord == 1)
             insertarPolInv($5);
             insertarPolInv("@pal2");
             insertarPolInv(":=");
             insertarPolInv($7);
             insertarPolInv("@pal1");
             insertarPolInv(":=");
-            insertarPolInv("@ini");
             insertarPolInv("@fin");
+            //Fin de rama falsa del if(@ord == 1)
+            //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
+            insertarPolInv("@ini");
             insertarPolInv("-");
             insertarPolInv("@lon");
             insertarPolInv(":=");
@@ -399,7 +405,7 @@ listaParametros:
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BGE");
+            insertarPolInv("BGT");
             apilarPos(posicionAct);
             avanzar();
             insertarPolInv("@tem[@pos]");
@@ -425,7 +431,7 @@ listaParametros:
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
-            insertarPolInv("@pal2");
+            insertarPolInv("@pal2[@pos]");
             insertarPolInv("'\\0'");
             insertarPolInv("CMP");
             insertarPolInv("BEQ");
@@ -483,14 +489,136 @@ sentenciaReorder:
     REORDER PA listaParametrosReorder PC {printf("\tSintactico: Reorder. \n");}
 
 listaParametrosReorder:
-    CA listaExpresiones CC COMA VERDADERO COMA CTEENTERO
-        {printf("\tSintactico:Lista de parametros Reorder. \n");}
-    | CA listaExpresiones CC COMA FALSO COMA CTEENTERO
-        {printf("\tSintactico:Lista de parametros Reorder. \n");};
+    CA listaExpresiones CC COMA VERDADERO COMA CTEENTERO {printf("\tSintactico:Lista de parametros Reorder. \n");
+        insertarPolInv("@piv");
+        insertarPolInv($7);
+        insertarPolInv(":=");
+        insertarPolInv("@piv");
+        insertarPolInv("@can");
+        insertarPolInv("CMP");
+        insertarPolInv("BLT");
+        insertarPolInv(itoa(posicionAct + 3, cadenaAux, 10));
+        insertarPolInv("BI");
+        apilarPos(posicionAct);
+        avanzar();
+        //Inicio de rama verdadera del if (@dir == 1)
+        insertarPolInv("@ori");
+        insertarPolInv("0");
+        insertarPolInv(":=");
+        insertarPolInv("@des");
+        insertarPolInv("@piv");
+        insertarPolInv(":=");
+        //Fin de rama verdadera del if (@dir == 1)
+        //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
+        apilarPos(posicionAct);
+        insertarPolInv("ET");
+        insertarPolInv("@ori");
+        insertarPolInv("@des");
+        insertarPolInv("CMP");
+        insertarPolInv("BGE");
+        apilarPos(posicionAct);
+        avanzar();
+        insertarPolInv("@aux");
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv(":=");
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv(":=");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv("@aux");
+        insertarPolInv(":=");
+        insertarPolInv("@ori");
+        insertarPolInv("1");
+        insertarPolInv("+");
+        insertarPolInv("@ori");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        insertarPolInv("@des");
+        insertarPolInv("1");
+        insertarPolInv("-");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        insertarPolInv("BI");
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct + 1, posicion);
+        posicion = desapilarPos();
+        insertarPolInv(itoa(posicion, cadenaAux, 10));
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct, posicion);}
+    | CA listaExpresiones CC COMA FALSO COMA CTEENTERO {printf("\tSintactico:Lista de parametros Reorder. \n");
+        insertarPolInv("@piv");
+        insertarPolInv($7);
+        insertarPolInv(":=");
+        insertarPolInv("@piv");
+        insertarPolInv("@can");
+        insertarPolInv("CMP");
+        insertarPolInv("BLT");
+        insertarPolInv(itoa(posicionAct + 3, cadenaAux, 10));
+        insertarPolInv("BI");
+        apilarPos(posicionAct);
+        avanzar();
+        //Inicio de rama falsa del if (@dir == 1)
+        insertarPolInv("@ori");
+        insertarPolInv("@piv");
+        insertarPolInv(":=");
+        insertarPolInv("@can");
+        insertarPolInv("1");
+        insertarPolInv("-");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        //Fin de rama falsa del if (@dir == 1)
+        //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
+        apilarPos(posicionAct);
+        insertarPolInv("ET");
+        insertarPolInv("@ori");
+        insertarPolInv("@des");
+        insertarPolInv("CMP");
+        insertarPolInv("@BGE");
+        apilarPos(posicionAct);
+        avanzar();
+        insertarPolInv("@aux");
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv(":=");
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv(":=");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv("@aux");
+        insertarPolInv(":=");
+        insertarPolInv("@ori");
+        insertarPolInv("1");
+        insertarPolInv("+");
+        insertarPolInv("@ori");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        insertarPolInv("@des");
+        insertarPolInv("1");
+        insertarPolInv("-");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        insertarPolInv("BI");
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct + 1, posicion);
+        posicion = desapilarPos();
+        insertarPolInv(itoa(posicion, cadenaAux, 10));
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct, posicion);};
 
 listaExpresiones:
-    expresion {printf("\tSintactico: Expresion. \n");}
-    | listaExpresiones COMA expresion {printf("\tSintactico: Expresiones. \n");};
+    expresion {printf("\tSintactico: Expresion. \n");
+        insertarPolInv("@lis[0]");
+        insertarPolInv(":=");
+        insertarPolInv("@can");
+        insertarPolInv("1");
+        insertarPolInv(":=");}
+    | listaExpresiones COMA expresion {printf("\tSintactico: Expresiones. \n");
+        insertarPolInv("@lis[@can]");
+        insertarPolInv(":=");
+        insertarPolInv("@can");
+        insertarPolInv("1");
+        insertarPolInv("+");
+        insertarPolInv("@can");
+        insertarPolInv(":=");};
 %%
 
 int yyerror(void)
