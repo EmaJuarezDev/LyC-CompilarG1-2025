@@ -23,13 +23,11 @@ int buscarEnTabla(char *nombre) {
 
 	int pos = 0;
 	
-    while(pos != ultimoSimbolo)
-    {
-		if(strcmp(nombre, tablaSimbolos[pos].nombre) == 0)
-			return pos;
-	
-        pos++;
-	}
+    while(pos != ultimoSimbolo) {
+		  if(strcmp(nombre, tablaSimbolos[pos].nombre) == 0)
+			  return pos;
+	    pos++;
+	  }
 
 	return -1;
 }

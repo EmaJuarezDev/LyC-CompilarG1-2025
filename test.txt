@@ -9,7 +9,7 @@
         base, var1, y: TIPOCADENITA
     }
 
-#+ Seleccion +#
+#+ Seleccion simple +#
 
     a := 0
     b := 2
@@ -35,6 +35,30 @@
     SINO
     {
         a := 5
+    }
+
+#+ Seleccion anidada +#
+
+    SI (a MENOR 3)
+    {
+        SI (a MAYOR 3)
+    	{
+        	b := c MAS 1
+    	}
+    }
+
+    SI (a MAYOR b)
+    {
+        SI (a MENOR b)
+    	{
+        	b := c MAS 1
+    	} 
+    SINO
+    {
+    	SI (a IGUAL b)
+    	{
+        	a := 5
+    	}
     }
 
 #+ Iteracion +#
