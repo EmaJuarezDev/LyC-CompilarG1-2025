@@ -6,36 +6,124 @@
 t_simbolo tablaSimbolos[TAM_TABLA];
 int ultimoSimbolo = 0;
 
-int insertarEnTabla(char* nombre, char* tipo, char* valor, char* longitud) {
-	
-  if(ultimoSimbolo == TAM_TABLA)
-    return -1;
-		
-  strncpy(tablaSimbolos[ultimoSimbolo].nombre, nombre, TAM_LEXEMA + 1);
-  strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, tipo, 6);
-  strncpy(tablaSimbolos[ultimoSimbolo].valor, valor, 52);
-  strncpy(tablaSimbolos[ultimoSimbolo].longitud, longitud, 3);
-
-return ultimoSimbolo++;
-}
-
 int buscarEnTabla(char *nombre) {
 
-	int pos = 0;
-	
-    while(pos != ultimoSimbolo)
-    {
-		if(strcmp(nombre, tablaSimbolos[pos].nombre) == 0)
-			return pos;
-	
-        pos++;
-	}
+    int pos = 0;
+    
+        while(pos != ultimoSimbolo) {
+            if(strcmp(nombre, tablaSimbolos[pos].nombre) == 0)
+                return pos;
+            pos++;
+        }
 
-	return -1;
+    return -1;
 }
 
 int getCantidadSimbolos() {
-	return ultimoSimbolo;
+	  return ultimoSimbolo;
+}
+
+void agregarVariable(char* nombre) {
+
+    if(ultimoSimbolo >= TAM_TABLA - 1) {
+        printf("No existe espacio disponible en la tabla de simbolos. \n");
+        exit(1);
+    }
+
+    if(buscarEnTabla(nombre) == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, nombre, TAM_LEXEMA + 1);
+        ultimoSimbolo++;
+    }
+    else {
+        printf("Error: Se declaró dos veces la variable '%s'. \n", nombre);
+        exit(2);
+    }
+}
+
+void agregarConstanteEnt(char* valor) {
+
+    if(ultimoSimbolo >= TAM_TABLA - 1) {
+        printf("No existe espacio disponible en la tabla de simbolos. \n");
+        exit(1);
+    }
+
+    char nombre[TAM_LEXEMA + 1];
+    sprintf(nombre, "_%s", valor);
+
+    if(buscarEnTabla(nombre) == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, nombre, TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOENT", 8);
+        strncpy(tablaSimbolos[ultimoSimbolo].valor, valor, TAM_LEXEMA + 1);
+        ultimoSimbolo++;
+    }
+}
+
+void agregarConstanteFlo(char* valor) {
+
+    if(ultimoSimbolo >= TAM_TABLA - 1) {
+        printf("No existe espacio disponible en la tabla de simbolos. \n");
+        exit(1);
+    }
+
+    char nombre[TAM_LEXEMA + 1];
+    sprintf(nombre, "_%s", valor);
+
+    if(buscarEnTabla(nombre) == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, nombre, TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPONUM", 8);
+        strncpy(tablaSimbolos[ultimoSimbolo].valor, valor, TAM_LEXEMA + 1);
+        ultimoSimbolo++;
+    }
+}
+
+void agregarConstanteStr(char* valor) {
+
+    if(ultimoSimbolo >= TAM_TABLA - 1) {
+        printf("No existe espacio disponible en la tabla de simbolos. \n");
+        exit(1);
+    }
+
+    int longitud = (strlen(valor) - 1);
+    char nombre[longitud + 1];
+    strncpy(nombre + 1, valor + 1, longitud);
+    nombre[0] = '_';
+    nombre[longitud] = '\0';
+    char* aux;
+    strcpy(aux, itoa(longitud - 1, aux, 10));
+
+    if(buscarEnTabla(nombre) == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, nombre, TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOCAD", 8);
+        strncpy(tablaSimbolos[ultimoSimbolo].longitud, aux, 4);
+        strncpy(tablaSimbolos[ultimoSimbolo].valor, nombre + 1, TAM_LEXEMA + 1);
+        ultimoSimbolo++;
+    }
+}
+
+void getTipoDato(char* nombre, char* tipo) {
+
+    int posicion;
+    posicion = buscarEnTabla(nombre);
+
+    if(posicion == -1) {
+        char aux[TAM_LEXEMA + 1];
+        sprintf(aux, "_%s", nombre);
+        posicion = buscarEnTabla(aux); 
+        if(posicion == -1) {   
+            printf("Error: No se declaro la variable '%s'. \n", nombre);
+            exit(3);
+        }
+    }
+
+    strcpy(tipo, tablaSimbolos[posicion].tipoDato);
+}
+
+void agregarTipoDato(char* tipo, int cantidadVar, int inicio) {
+
+    int i;
+
+  	for(i = 0; i < cantidadVar; i++)
+        strncpy(tablaSimbolos[inicio + i].tipoDato, tipo, 7);
 }
 
 void generarArchivo()
@@ -44,8 +132,8 @@ void generarArchivo()
   
     fp = fopen ("symbol-table.txt", "w+t");
   
-    fprintf(fp, "\n                       NOMBRE                       | TIPODATO |                       VALOR                       | LONGITUD ");
-    fprintf(fp, "\n----------------------------------------------------|----------|---------------------------------------------------|----------\n");
+    fprintf(fp, "\n                       NOMBRE                       | TIPODATO |                       VALOR                        | LONGITUD ");
+    fprintf(fp, "\n----------------------------------------------------|----------|----------------------------------------------------|----------\n");
   
     size_t i;
   
@@ -54,7 +142,7 @@ void generarArchivo()
       t_simbolo *punteroSimbolo = &tablaSimbolos[i];
 
       fprintf(fp, "%-*s|%*s|%*s|%*s\n", 52, punteroSimbolo->nombre,
-        10, punteroSimbolo->tipoDato, 51, punteroSimbolo->valor, 10, punteroSimbolo->longitud);
+        10, punteroSimbolo->tipoDato, 52, punteroSimbolo->valor, 10, punteroSimbolo->longitud);
     }
 
     fclose (fp);

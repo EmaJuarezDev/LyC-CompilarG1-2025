@@ -61,20 +61,30 @@
 
     #+ Flotantes +#
 
-        a := 99999.99
-        a := 99.
-        a := .9999
+        a1 := 99999.99
+        a1 := 99.
+        a1 := .9999
 
-        a := 1.1
-        a := 340200000000000000000000000000000000000.0
-        #+ a := 340300000000000000000000000000000000000.0 Esta línea de código genera un error léxico: Constante flotante 
+        a1 := 1.1
+        a1 := 340200000000000000000000000000000000000.0
+        #+ a1 := 340300000000000000000000000000000000000.0 Esta línea de código genera un error léxico: Constante flotante 
             inválida, porque está fuera de rango. +#
-        a := 0.00000000000000000000000000000000000001176
-        #+ a := 0.00000000000000000000000000000000000001175 Esta línea de código genera un error léxico: Constante flotante 
+        a1 := 0.00000000000000000000000000000000000001176
+        #+ a1 := 0.00000000000000000000000000000000000001175 Esta línea de código genera un error léxico: Constante flotante 
             inválida, porque está fuera de rango. +#
-        a := 01.1
-        a := 1.10
-        a := 00000000000000.125
+        a1 := 01.1
+        a1 := 1.10
+        a1 := 00000000000000.125
+
+        #+ a1 := 1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, constante entera a 
+            variable flotante. +#
+        #+ a1 := "a" Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, constante String a 
+            variable flotante. +#
+
+        #+ a1 :=  cEsta línea de código genera un error semántico: Asignación de datos de distinto tipo, variable entera a 
+            variable flotante. +#
+        #+ a1 := p1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, variable String a 
+            variable flotante. +#
 
     #+ Enteros +#
 
@@ -84,15 +94,37 @@
         #+ c := 32768 Esta línea de código genera un error léxico: Constante entera inválida, porque está fuera de rango. +#
         c := 00000000000000125
 
+        #+ c := 1.1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, constante flotante a 
+            variable entera. +#
+        #+ c := "a" Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, constante String a 
+            variable entera. +#
+
+        #+ c := a1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, variable flotante a 
+            variable entera. +#
+        #+ c := p1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, variable String a 
+            variable entera. +#
+
+        #+ f := 1 Esta línea de código genera un error, ID no declarada pero usada. +#
+
     #+ Strings +#
 
-        b := "@sdADaSjfla%dfg"
-        b := "asldk  fh sjf"
+        p1 := "@sdADaSjfla%dfg"
+        p1 := "asldk  fh sjf"
 
-        b := "12345678901234567890123456789012345678901234567890"
-        #+ b := "12345678901234567890123456789012345678901234567890x" Esta línea de código genera un error léxico: Constante 
+        p1 := "12345678901234567890123456789012345678901234567890"
+        #+ p1 := "12345678901234567890123456789012345678901234567890x" Esta línea de código genera un error léxico: Constante 
             String inválida, porque está fuera de rango. +#
-        b := "a"
+        p1 := "a"
+
+        #+ p1 := 1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, constante entera a 
+            variable String. +#
+        #+ p1 := 1.1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, constante flotante a 
+            variable String. +#
+
+        #+ p1 := c Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, variable entera a 
+            variable String. +#
+        #+ p1 := a1 Esta línea de código genera un error semántico: Asignación de datos de distinto tipo, variable flotante a 
+            variable String. +#
 
 #+ Esto es un comentario +#
 #+ Un comentario inválido debería utilizar uno de los caracteres inválidos. Por ejemplo, el arroba (ver su expresión regular). +#

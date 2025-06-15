@@ -154,7 +154,7 @@ SLICEANDCONCAT          "CORTAYPEGAR"
 "\n\t"
 " "             		
 "\r\n"
-.			                {printf( "\nError lexico. Caracter no reconocido: %s\n", yytext ); exit (0);}
+.			                {printf( "\nError lexico. Caracter no reconocido: '%s'\n", yytext ); exit(0);}
 %%
 
 
