@@ -4,18 +4,23 @@
 #define TAM_TABLA 1000
 #endif
 #ifndef TAM_LEXEMA
-#define TAM_LEXEMA 100
+#define TAM_LEXEMA 50
 #endif
 
-int insertarEnTabla(char*, char*, char*, char*);
+void agregarVariable(char*);
 int buscarEnTabla(char*);
 int getCantidadSimbolos();
+void agregarConstanteInt(char*);
+void agregarConstanteFlo(char*);
+void agregarConstanteStr(char*);
+void getTipoDato(char*, char*);
+void agregarTipoDato(char*, int, int);
 void generarArchivo();
 
 typedef struct t_simbolo {
-	char nombre[TAM_LEXEMA + 1];
- 	char tipoDato[7];
- 	char valor[53];
+	char nombre[TAM_LEXEMA + 2];
+ 	char tipoDato[8];
+ 	char valor[TAM_LEXEMA + 2];
  	char longitud[4];
 } t_simbolo;
 
