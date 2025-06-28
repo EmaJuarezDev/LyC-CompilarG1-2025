@@ -7,6 +7,8 @@
 #include <string.h>
 #include "y.tab.h"
 #include "funcionesEspeciales.h"
+#include "tablaDeSimbolos.h"
+
 int yystopparser = 0;
 extern FILE *yyin;
 char *yytext;
@@ -14,7 +16,7 @@ char *yytext;
     int yyerror();
     int yylex();
 
-//Primitivas de la PI:
+//Funciones de código intermedio (polaca inversa):
 char* insertarPolInv(char*);
 void avanzar();
 int desapilarPos();
@@ -28,13 +30,35 @@ void validarTipoDato(char*);
 void eliminarTipoAct();
 void generarPolInv();
 
+//Funciones de código Assembler:
+void generarAsm();
+void imprimirHeader(FILE*);
+void imprimirVariables(FILE*);
+void generarFadd(FILE*);
+void generarFmul(FILE*);
+void generarFdiv(FILE*);
+void generarFsub(FILE*);
+void generarCmp(FILE*, char*);
+void generarAsig(FILE*);
+void generarWri(FILE*);
+//void generarRea(FILE*);
+void desapilarAsm(char*);
+void apilarAsm(char*);
+void agregarCerDec(char*);
+void agregarCerEnt(char*);
+void reemplazarPunto(char*);
+
 //Variables auxiliares:
-int posicionAct = 0, topePil = -1, posicion = -1, cantidadVarTip, posicionIniTip;
+int posicionAct = 0, topePil = -1, posicion = -1, topeAsm = -1, cantidadVarTip, posicionIniTip;
 char vectorPolInv[1000][53];
 int pilaPolInv[50];
 char cadenaAux[5];
 char tipoDatoAct[8] = "SINTIPO";
 char tipoVar[8];
+char variablePil[20];
+char topePilAsm[53];
+char siguientePil[53];
+char pilaASM[1000][53];
 
 %}
 
@@ -109,7 +133,8 @@ char tipoVar[8];
 %%
 compOkey:
     programa {printf("\tSintactico: Compilacion OK. \n");
-    generarPolInv();};
+    generarPolInv();
+    generarAsm();}
 
 programa:
     sentenciaInit bloque {printf("\tSintactico: Programa. \n");}
@@ -216,7 +241,7 @@ factor:
         validarTipoDato(tipoVar);}
     | CTEENTERO {printf("\tSintactico: CTEENTERO es factor. \n");
         insertarPolInv(yytext);
-        agregarConstanteEnt($1);
+        agregarConstanteInt($1);
         validarTipoDato("TIPOENT");}
     | CTENUMEROCONCOMA {printf("\tSintactico: CTECONCOMA es factor. \n");
         insertarPolInv(yytext);
@@ -253,10 +278,10 @@ iniVar:
         agregarTipoDato(yytext, cantidadVarTip, posicionIniTip);};
 
 variablesSeguidas:
-    ID {printf("\tSintactico: Una variable. \n"); agregarVariable(yytext, "");
+    ID {printf("\tSintactico: Una variable. \n"); agregarVariable(yytext);
         cantidadVarTip = 1;
         posicionIniTip = getCantidadSimbolos() - 1;}
-    | variablesSeguidas COMA ID {printf("\tSintactico: Mas de una variable. \n"); agregarVariable(yytext, "");
+    | variablesSeguidas COMA ID {printf("\tSintactico: Mas de una variable. \n"); agregarVariable(yytext);
         cantidadVarTip++;};
 
 tipo:
@@ -658,6 +683,7 @@ listaExpresiones:
 int yyerror(void)
     {
         printf("\nError Sintactico. \n");
+        system ("Pause");
         exit (1);
     }
      
@@ -775,11 +801,583 @@ void eliminarTipoAct() {
 }
 
 void generarPolInv() {
-    FILE *fp = fopen("intermediate-code.txt", "w+t");
-    fprintf(fp, "|----|---------------------------------------------------|\n");
+
+    FILE* fCI = fopen("intermediate-code.txt", "w+t");
+
+    fprintf(fCI, "|----|---------------------------------------------------|\n");
+
     int i;
+   
     for (i = 0; i < posicionAct; i++) {
-        fprintf(fp, "|%-*d|%*s|\r", 4, i, 51, vectorPolInv[i]);
-        fprintf(fp, "|----|---------------------------------------------------|\n");
+
+        fprintf(fCI, "|%-*d|%*s|\r", 4, i, 51, vectorPolInv[i]);
+        fprintf(fCI, "|----|---------------------------------------------------|\n");
     }
+}
+
+void imprimirHeader(FILE* fPun) {
+	
+    //fprintf(fPun,"include macros2.asm\ninclude number.asm\n");
+    fprintf(fPun,".MODEL LARGE\n.386\n.STACK 200h\n.DATA\n\n");//;MAXTEXTSIZE equ 50\n \n.DATA\n\n.DATA\n");
+}
+
+void imprimirVariables(FILE* fPun) { 
+
+	char valor[52], nombre[52], auxNombre[52];
+    char *punto;
+    float aux;
+	int i, longitud, ultimoSimbolo = getCantidadSimbolos();
+    t_simbolo auxSimbolo;
+
+	for(i = 0; i < ultimoSimbolo; i++) {
+
+        auxSimbolo = getSimboloDeTabla(i);
+
+		if(auxSimbolo.nombre[0] == '_') {                
+
+            if(strcmp(auxSimbolo.tipoDato, "TIPONUM") == 0) {
+
+                if(auxSimbolo.nombre[1] == '.') {
+
+                    strcpy(nombre, "_cte0_");
+                    strcat(nombre, auxSimbolo.nombre + 2);
+                    strcpy(valor, auxSimbolo.valor);
+                    aux = atof(valor);
+                    fprintf(fPun,"%s\t%s\t%.4g\n", nombre, "dd", aux);
+                }
+                else if(auxSimbolo.nombre[strlen(auxSimbolo.nombre) - 1] == '.') {
+
+                    strcpy(nombre, "_cte");
+                    strcpy(auxNombre, auxSimbolo.nombre);
+                    longitud = strlen(auxNombre);
+                    auxNombre[longitud - 1] = '\0';
+                    strcat(nombre, auxNombre);
+                    strcpy(auxNombre, "_0");
+                    strcat(nombre, auxNombre);
+                    strcpy(valor, auxSimbolo.valor);
+                    aux = atof(valor);
+                    fprintf(fPun,"%s\t%s\t%.4g\n", nombre, "dd", aux);
+                }
+                else {
+
+                    strcpy(nombre, "_cte");
+                    strcat(nombre, auxSimbolo.nombre + 1);
+                    if(punto = strchr(nombre, '.'))
+                        *punto = '_';
+                    fprintf(fPun,"%s\t%s\t%s\n", nombre, "dd", auxSimbolo.valor);
+                }
+            }
+        }
+        else {
+
+            strcpy(valor, "?");
+            fprintf(fPun,"%s\t%s\t%s\n", auxSimbolo.nombre, "dd", valor);
+        }
+    }
+
+	//fprintf(fPun, "_@AUX dd ?\n");
+	fprintf(fPun, "\n.CODE\n"); //START:\n");
+	fprintf(fPun, "mov AX,@DATA\nmov DS,AX\nmov es,ax\n\n");
+}
+
+void apilarAsm(char *cadena) {
+	
+    topeAsm++;
+	strcpy(pilaASM[topeAsm], cadena);
+}
+
+void desapilarAsm(char *cadena) {
+	
+    strcpy(cadena, pilaASM[topeAsm]);
+	topeAsm--;
+}
+
+void reemplazarPunto(char *numero) {
+
+    char *punto;
+    
+    if(punto = strchr(numero, '.'))
+        *punto = '_';
+    
+    return;
+}
+
+void generarFadd(FILE *fPun) {
+	
+    int i, variable;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+    printf("\nTope: %s. \n", topePilAsm);
+	desapilarAsm(siguientePil);
+    printf("Siguiente: %s. \n", siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+    variable = esVariable(siguientePil);
+
+    if(strcmp(siguientePil, "@AUX") != 0) {
+    
+        if(variable) {
+
+            if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+                agregarCerDec(siguientePil);
+                agregarCerEnt(siguientePil);
+                reemplazarPunto(siguientePil);
+            }
+
+            fprintf(fPun, "FLD _cte%s\n", siguientePil);
+        }
+        else
+            fprintf(fPun, "FLD %s\n", siguientePil);
+    }
+    
+    getTipoDato(topePilAsm, auxTipo);
+    variable = esVariable(topePilAsm);
+ 
+    if(variable) {
+
+        if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+            agregarCerDec(topePilAsm);
+            agregarCerEnt(topePilAsm);
+            reemplazarPunto(topePilAsm);
+        }
+
+        fprintf(fPun, "FLD _cte%s\n", topePilAsm);
+    }
+    else
+        fprintf(fPun, "FLD %s\n", topePilAsm);
+
+	fprintf(fPun, "%s\n", "FADD");
+	//fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarFmul(FILE *fPun) {
+
+	int i, variable;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+    variable = esVariable(siguientePil);
+
+    if(strcmp(siguientePil, "@AUX") != 0) {
+
+        if(variable) {
+
+            if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+                agregarCerDec(siguientePil);
+                agregarCerEnt(siguientePil);
+                reemplazarPunto(siguientePil);
+            }
+
+            fprintf(fPun, "FLD _cte%s\n", siguientePil);
+        }
+        else
+            fprintf(fPun, "FLD %s\n", siguientePil);
+    }
+
+    getTipoDato(topePilAsm, auxTipo);
+    variable = esVariable(topePilAsm);
+ 
+    if(variable) {
+
+        if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+            agregarCerDec(topePilAsm);
+            agregarCerEnt(topePilAsm);
+            reemplazarPunto(topePilAsm);
+        }
+
+        fprintf(fPun, "FLD _cte%s\n", topePilAsm);
+    }
+    else
+        fprintf(fPun, "FLD %s\n", topePilAsm);
+
+	fprintf(fPun, "%s\n", "FMUL");
+	//fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarFdiv(FILE *fPun) {
+	
+	int i, variable;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+    variable = esVariable(siguientePil);
+
+    if(strcmp(siguientePil, "@AUX") != 0) {
+    
+        if(variable) {
+
+            if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+                agregarCerDec(siguientePil);
+                agregarCerEnt(siguientePil);
+                reemplazarPunto(siguientePil);
+            }
+
+            fprintf(fPun, "FLD _cte%s\n", siguientePil);
+        }
+        else
+            fprintf(fPun, "FLD %s\n", siguientePil);
+    }
+
+    getTipoDato(topePilAsm, auxTipo);
+    variable = esVariable(topePilAsm);
+ 
+    if(variable) {
+
+        if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+            agregarCerDec(topePilAsm);
+            agregarCerEnt(topePilAsm);
+            reemplazarPunto(topePilAsm);
+        }
+
+        fprintf(fPun, "FLD _cte%s\n", topePilAsm);
+    }
+    else
+        fprintf(fPun, "FLD %s\n", topePilAsm);
+
+	fprintf(fPun, "%s\n", "FDIV");
+	//fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarCmp(FILE *fPun, char *linea) {
+
+	char comparador[7];
+	int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", siguientePil);
+	}else{
+		//agregarCero(siguientePil);
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}else{
+		//agregarCero(siguientePil);
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}
+	}
+	getTipoDato(topePilAsm, auxTipo);
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", topePilAsm);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", topePilAsm);
+		}else{
+			//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", topePilAsm);
+		}
+	}
+	fprintf(fPun, "FXCH \nFCOMP \nfstsw ax\nsahf\n");	
+}
+
+void generarAsig(FILE *fPun) {
+
+	int i, variable;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+
+	variable = esVariable(siguientePil);
+
+    if(strcmp(siguientePil, "@AUX") != 0) {
+        
+        if(variable) {
+
+            if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+                agregarCerDec(siguientePil);
+                agregarCerEnt(siguientePil);
+                reemplazarPunto(siguientePil);
+            }
+
+            fprintf(fPun, "FLD _cte%s\n", siguientePil);
+        }
+        else
+            fprintf(fPun, "FLD %s\n", siguientePil);
+    }
+    
+    /*else if(strcmp(auxTipo, "TIPOCAD") == 0) {
+		
+        for (i = 0; i < strlen(siguientePil); i++) {
+			
+            if (siguientePil[i] == '\'') 
+				siguientePil[i] = '_';
+		}
+
+        fprintf(fPun, "LEA EAX, %s\n", siguientePil);
+	}*/
+
+	fprintf(fPun, "FSTP %s\n", topePilAsm);
+
+	/*else if(strcmp(auxTipo, "TIPOCAD") == 0) {
+			
+        for(i = 0; i < strlen(topePilAsm); i++) {
+			
+            if (topePilAsm[i] == '\'')
+				topePilAsm[i] = '_';
+		}
+			
+        fprintf(fPun, "MOV %s, EAX\n", topePilAsm);
+		//fprintf(final, "CALL COPIAR\n"); 
+	}*/
+}	
+
+void agregarCerEnt(char *cadena) {
+	
+    char aux[50];
+
+	if(cadena[(strlen(cadena)) - 1] != '.') 
+        return;
+    
+    strcpy(aux, "0\0");
+	strcat(cadena, aux);   
+}
+
+void agregarCerDec(char *cadena) {
+	
+    char aux[50];
+
+	if(*cadena != '.')
+		return;
+
+	strcpy(aux, "0");
+	strcat(aux, cadena);
+	strcpy(cadena, aux);
+}
+
+void generarFsub(FILE *fPun) {
+	
+    int i, variable;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+    variable = esVariable(siguientePil);
+
+    if(strcmp(siguientePil, "@AUX") != 0) {
+
+        if(variable) {
+
+            if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+                agregarCerDec(siguientePil);
+                agregarCerEnt(siguientePil);
+                reemplazarPunto(siguientePil);
+            }
+
+            fprintf(fPun, "FLD _cte%s\n", siguientePil);
+        }
+        else
+            fprintf(fPun, "FLD %s\n", siguientePil);
+    }
+
+    getTipoDato(topePilAsm, auxTipo);
+    variable = esVariable(topePilAsm);
+ 
+    if(variable) {
+
+        if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+            agregarCerDec(topePilAsm);
+            agregarCerEnt(topePilAsm);
+            reemplazarPunto(topePilAsm);
+        }
+
+        fprintf(fPun, "FLD _cte%s\n", topePilAsm);
+    }
+    else
+        fprintf(fPun, "FLD %s\n", topePilAsm);
+        
+	fprintf(fPun, "%s\n", "FSUB"); //St(0),St(1)\n");
+	//fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarWri(FILE *fPun){
+	int i;
+	char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	getTipoDato(topePilAsm, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "IMP Integer _%s\n", topePilAsm);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "IMP Float _%s, 2\n", topePilAsm);
+		}
+		else{ 
+				fprintf(fPun, "IMP String _%s, 2\n", topePilAsm);
+		}
+	}
+	fprintf(fPun, "NEWLINE\n");
+}
+
+/*void grabarSaltosEnArch(FILE *fPun) {
+	
+    int i = 0;
+	while(i<indiceVecSaltos){
+	fprintf(fPun,"\n%s\n",vecSaltos[i]);
+	i++;
+	}
+}*/
+
+void generarAsm() {
+
+	FILE* fCA = fopen("final.asm","w+t");
+	
+	char linea[52];
+	char cmp[10] = "FCOMP";
+    int i, j;
+
+	imprimirHeader(fCA);
+	imprimirVariables(fCA);
+
+	for (i = 0; i < posicionAct; i++) {
+
+		strcpy(variablePil, vectorPolInv[i]);
+		printf("Contenido de la polaca inversa:\t%s\n", variablePil);
+
+		if(strcmp(variablePil, "+") == 0)
+			generarFadd(fCA);
+		else if(strcmp(variablePil, "*") == 0)
+            generarFmul(fCA);
+        else if(strcmp(variablePil, "-") == 0)
+			generarFsub(fCA);
+		else if(strcmp(variablePil, "/") == 0)
+			generarFdiv(fCA);
+		else if(strcmp(variablePil, ":=") == 0)
+			generarAsig(fCA);
+		else if(strcmp(variablePil, "WRITE") == 0)
+			generarWri(fCA);
+		/*else if(strcmp(variablePil, "READ") == 0 )
+			generarRea(fCA);*/
+		else if(strcmp(variablePil, "CMP") == 0)
+			generarCmp(fCA, variablePil);
+		else if(strcmp(variablePil, "BGE") == 0)
+			fprintf(fCA, "JNB ");
+		else if(strcmp(variablePil, "BGT") == 0)
+			fprintf(fCA, "JNBE ");
+		else if(strcmp(variablePil, "BLE") == 0)
+			fprintf(fCA, "JNA ");
+		else if(strcmp(variablePil, "BEQ") == 0)
+			fprintf(fCA, "JE ");
+		else if(strcmp(variablePil,"BNE") == 0)
+			fprintf(fCA,"JNE ");
+		else if(strcmp(variablePil, "BLT") == 0)
+			fprintf(fCA, "JNAE ");
+		else if(strstr(variablePil, ":"))
+			fprintf(fCA,"%s\n",variablePil);
+		else if(strstr(variablePil, "ET") && strstr(variablePil, ":") == NULL)
+			fprintf(fCA, "%s\n", variablePil);
+		else if(strcmp(variablePil, "BI") == 0)
+			fprintf(fCA, "JMP ");
+		else
+			apilarAsm(variablePil);
+	}
+
+	// grabarSaltosEnArch(fCA);
+
+	fprintf(fCA,"\nmov ax,4c00h\n" );
+    //fprintf(final,"mov al,0\n" );
+    fprintf(fCA,"int 21h\n" );
+
+	/*fprintf(final,"\nSTRLEN PROC NEAR\n");
+	fprintf(final,"\tmov BX,0\n");
+	fprintf(final,"\nSTRL01:\n");
+	fprintf(final,"\tcmp BYTE PTR [SI+BX],'$'\n");
+	fprintf(final,"\tje STREND\n");
+	fprintf(final,"\tinc BX\n");
+	fprintf(final,"\tjmp STRL01\n");
+	fprintf(final,"\nSTREND:\n");
+	fprintf(final,"\tret\n");
+	fprintf(final,"\nSTRLEN ENDP\n");
+	fprintf(final,"\nCOPIAR PROC NEAR\n");
+	fprintf(final,"\tcall STRLEN\n");
+	fprintf(final,"\tcmp BX,MAXTEXTSIZE\n");
+	fprintf(final,"\tjle COPIARSIZEOK\n");
+	fprintf(final,"\tmov BX,MAXTEXTSIZE\n");
+	fprintf(final,"\nCOPIARSIZEOK:\n");
+	fprintf(final,"\tmov CX,BX\n");
+	fprintf(final,"\tcld\n");
+	fprintf(final,"\trep movsb\n");
+	fprintf(final,"\tmov al,'$'\n");
+	fprintf(final,"\tmov BYTE PTR [DI],al\n");
+	fprintf(final,"\tret\n");
+	fprintf(final,"\nCOPIAR ENDP\n");
+	fprintf(final,"\nEND START\n");*/
+
+    fprintf(fCA,"End\n");
+	fclose(fCA);
 }

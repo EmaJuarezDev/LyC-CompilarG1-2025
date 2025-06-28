@@ -11,6 +11,7 @@ int buscarEnTabla(char *nombre) {
     int pos = 0;
     
         while(pos != ultimoSimbolo) {
+
             if(strcmp(nombre, tablaSimbolos[pos].nombre) == 0)
                 return pos;
             pos++;
@@ -19,8 +20,36 @@ int buscarEnTabla(char *nombre) {
     return -1;
 }
 
+int esVariable(char* valor) {
+    
+    int posicion, res = 1;
+    char aux[2], auxValor[53];
+
+    strcpy(aux, "_");
+    strcpy(auxValor, valor);
+    strcat(aux, auxValor);
+    posicion = buscarEnTabla(aux);
+    
+    if(posicion == (-1))
+        res = 0;
+
+    return res;
+}
+
+t_simbolo getSimboloDeTabla(int posicion) {
+    return tablaSimbolos[posicion];
+}
+
 int getCantidadSimbolos() {
 	  return ultimoSimbolo;
+}
+
+char* getNombreSimbolo(int i) {
+    return tablaSimbolos[i].nombre;
+}
+
+char* getValorSimbolo(int i) {
+	  return tablaSimbolos[i].valor;
 }
 
 void agregarVariable(char* nombre) {
@@ -40,7 +69,7 @@ void agregarVariable(char* nombre) {
     }
 }
 
-void agregarConstanteEnt(char* valor) {
+void agregarConstanteInt(char* valor) {
 
     if(ultimoSimbolo >= TAM_TABLA - 1) {
         printf("No existe espacio disponible en la tabla de simbolos. \n");
@@ -64,7 +93,7 @@ void agregarConstanteFlo(char* valor) {
         printf("No existe espacio disponible en la tabla de simbolos. \n");
         exit(1);
     }
-
+    
     char nombre[TAM_LEXEMA + 1];
     sprintf(nombre, "_%s", valor);
 
@@ -102,14 +131,16 @@ void agregarConstanteStr(char* valor) {
 
 void getTipoDato(char* nombre, char* tipo) {
 
-    int posicion;
-    posicion = buscarEnTabla(nombre);
+    int posicion = buscarEnTabla(nombre);
 
-    if(posicion == -1) {
+    if(posicion == -1 && strcmp(nombre, "@AUX") != 0) {
+
         char aux[TAM_LEXEMA + 1];
         sprintf(aux, "_%s", nombre);
         posicion = buscarEnTabla(aux); 
+        
         if(posicion == -1) {   
+        
             printf("Error: No se declaro la variable '%s'. \n", nombre);
             exit(3);
         }
@@ -139,10 +170,10 @@ void generarArchivo()
   
     for(i = 0; i < getCantidadSimbolos(); i++) {
 
-      t_simbolo *punteroSimbolo = &tablaSimbolos[i];
+        t_simbolo *punteroSimbolo = &tablaSimbolos[i];
 
-      fprintf(fp, "%-*s|%*s|%*s|%*s\n", 52, punteroSimbolo->nombre,
-        10, punteroSimbolo->tipoDato, 52, punteroSimbolo->valor, 10, punteroSimbolo->longitud);
+        fprintf(fp, "%-*s|%*s|%*s|%*s\n", 52, punteroSimbolo->nombre,
+            10, punteroSimbolo->tipoDato, 52, punteroSimbolo->valor, 10, punteroSimbolo->longitud);
     }
 
     fclose (fp);
