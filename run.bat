@@ -4,7 +4,7 @@ bison -dyv Sintactico.y
 
 gcc.exe main.c tablaDeSimbolos.c funcionesEspeciales.c lex.yy.c y.tab.c -o lyc-compiler-2.0.0.exe
 
-lyc-compiler-2.0.0.exe test.txt
+lyc-compiler-2.0.0.exe test2.txt
 
 @echo off
 del lyc-compiler-2.0.0.exe

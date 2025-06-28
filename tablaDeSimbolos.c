@@ -127,6 +127,11 @@ void getTipoDato(char* nombre, char* tipo) {
 
     int posicion = buscarEnTabla(nombre);
 
+    // Si no está, chequeo si es acceso tipo @lis[algo]
+    if (posicion == -1 && strstr(nombre, "@lis[") == nombre) {
+        posicion = buscarEnTabla("@lis");
+    }
+
     if(posicion == -1 && strcmp(nombre, "@AUX") != 0) {
 
         char aux[TAM_LEXEMA + 1];
@@ -151,6 +156,75 @@ void agregarTipoDato(char* tipo, int cantidadVar, int inicio) {
         strncpy(tablaSimbolos[inicio + i].tipoDato, tipo, 7);
 }
 
+void declararTemporalesReorder() {
+    // Vector base @lis (simulado como variable común, sin soporte real de índices)
+    if (buscarEnTabla("@lis") == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, "@lis", TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOENT", 8);  // o "VECTOR" si lo soportás
+        strncpy(tablaSimbolos[ultimoSimbolo].valor, "", TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].longitud, "50", 4); // suponiendo 50 elementos
+        ultimoSimbolo++;
+    }
+
+    // Variables auxiliares (enteras)
+    char* vars[] = { "@can", "@ori", "@des", "@aux", "@piv" };
+    for (int i = 0; i < 5; i++) {
+        if (buscarEnTabla(vars[i]) == -1) {
+            strncpy(tablaSimbolos[ultimoSimbolo].nombre, vars[i], TAM_LEXEMA + 1);
+            strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOENT", 8);
+            strncpy(tablaSimbolos[ultimoSimbolo].valor, "0", TAM_LEXEMA + 1);
+            tablaSimbolos[ultimoSimbolo].longitud[0] = '\0';
+            ultimoSimbolo++;
+        }
+    }
+}
+
+void declararTemporalesSliceAndConcat() {
+    char* enteros[] = { "@ini", "@fin", "@lon", "@aux", "@pos" };
+    char* cadenas = "@res";
+
+    // Declarar variables enteras auxiliares
+    for (int i = 0; i < 5; i++) {
+        if (buscarEnTabla(enteros[i]) == -1) {
+            strncpy(tablaSimbolos[ultimoSimbolo].nombre, enteros[i], TAM_LEXEMA + 1);
+            strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOENT", 8);
+            strncpy(tablaSimbolos[ultimoSimbolo].valor, "0", TAM_LEXEMA + 1);
+            tablaSimbolos[ultimoSimbolo].longitud[0] = '\0';
+            ultimoSimbolo++;
+        }
+    }
+
+    // Declarar @res como cadena (TIPOCAD) resultado
+    if (buscarEnTabla("@res") == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, "@res", TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOCAD", 8);
+        strncpy(tablaSimbolos[ultimoSimbolo].valor, "", TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].longitud, "100", 4); // Podés ajustar este tamaño si querés
+        ultimoSimbolo++;
+    }
+
+    // Declarar @tem como vector temporal (TIPOCAD)
+    if (buscarEnTabla("@tem") == -1) {
+        strncpy(tablaSimbolos[ultimoSimbolo].nombre, "@tem", TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOCAD", 8);
+        strncpy(tablaSimbolos[ultimoSimbolo].valor, "", TAM_LEXEMA + 1);
+        strncpy(tablaSimbolos[ultimoSimbolo].longitud, "100", 4);
+        ultimoSimbolo++;
+    }
+
+    // Declarar @pal1 y @pal2 como TIPOCAD
+    char* palabras[] = { "@pal1", "@pal2" };
+    for (int i = 0; i < 2; i++) {
+        if (buscarEnTabla(palabras[i]) == -1) {
+            strncpy(tablaSimbolos[ultimoSimbolo].nombre, palabras[i], TAM_LEXEMA + 1);
+            strncpy(tablaSimbolos[ultimoSimbolo].tipoDato, "TIPOCAD", 8);
+            strncpy(tablaSimbolos[ultimoSimbolo].valor, "", TAM_LEXEMA + 1);
+            strncpy(tablaSimbolos[ultimoSimbolo].longitud, "100", 4);
+            ultimoSimbolo++;
+        }
+    }
+}
+
 void generarArchivo()
 {
     FILE *fp;
@@ -172,3 +246,5 @@ void generarArchivo()
 
     fclose (fp);
 }
+
+

@@ -1,0 +1,106 @@
+#+ Declaracion de variables +#
+
+    ARRANCAACA {
+        a1, b1 : TIPONUMEROCONCOMA
+        variable1: TIPOENTERO
+        p1, p2, p3 : TIPOCADENITA
+
+        a, b, c, d, e, x, r, j: TIPOENTERO
+        base, var1, y: TIPOCADENITA
+    }
+
+    #+a := 1 DIVIDIR 2
+    b := 2 POR 3
+    c := 3 MENOS 4+#
+    b1 := 1.5 MAS 999.
+    b1 := .999 MAS 2.5
+
+#+ Entrada +#
+
+    LEER(base)
+
+#+ Salida +#
+
+    DECIR(var1)
+
+#+ Asignaciones+#
+
+    #+ Flotantes +#
+
+        a1 := 99999.99
+        a1 := 99.
+        a1 := .9999
+
+        a1 := 1.1
+        a1 := 340200000000000000000000000000000000000.0
+
+        a1 := 0.00000000000000000000000000000000000001176
+
+        a1 := 01.1
+        a1 := 1.10
+        a1 := 00000000000000.125
+
+    #+ Enteros +#
+
+        c := 0
+        c := 1
+        c := 32767
+        c := 00000000000000125
+
+#+ Comparadores +#
+
+    SI (a MAYORIGUAL b)
+    {
+        DECIR(var1)
+    }
+
+    SI (a MENORIGUAL b)
+    {
+        DECIR(var1)
+    }
+
+    SI (a DISTINTASO b)
+    {
+        DECIR(var1)
+    }
+
+    SI (a IGUALA b)
+    {
+        DECIR(var1)
+    }
+
+    SI (a MENOR b)
+    {
+        DECIR(var1)
+    }
+
+#+ Operadores lógicos +#
+
+    a := 1
+    b := 1
+    c := 2
+
+    SI (a MAYOR b YQUEMAS c MAYOR b)
+    {
+        DECIR(var1)
+    }
+
+    SI (a MAYOR b OQUEMAS c MAYOR b)
+    {
+        DECIR(var1)
+    }
+
+    SI (NOES a MAYOR b)
+    {
+        DECIR(var1)
+    }
+
+#+ reorder +#
+
+    MENJUNJE([x MAS 3, 1 MENOS 1, 9 MENOS x],VERDADERO,2)
+
+    MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,2)
+
+    MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],FALSO,3)
+
+    MENJUNJE([r POR j MENOS 2, x MAS 3, 1 MAS 1, 9 MENOS x],VERDADERO,0)

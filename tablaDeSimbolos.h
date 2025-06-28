@@ -23,6 +23,10 @@ void agregarConstanteFlo(char*);
 void agregarConstanteStr(char*);
 void getTipoDato(char*, char*);
 void agregarTipoDato(char*, int, int);
+
+void declararTemporalesReorder();
+void declararTemporalesSliceAndConcat();
+
 void generarArchivo();
 
 #endif
