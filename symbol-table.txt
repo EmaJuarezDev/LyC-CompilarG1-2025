@@ -1,50 +1,24 @@
 
-                       NOMBRE                       | TIPODATO |                       VALOR                       | LONGITUD 
-----------------------------------------------------|----------|---------------------------------------------------|----------
-a1                                                  |          |                                                  -|          
-b1                                                  |          |                                                  -|          
-variable1                                           |          |                                                  -|          
-p1                                                  |          |                                                  -|          
-p2                                                  |          |                                                  -|          
-p3                                                  |          |                                                  -|          
-a                                                   |          |                                                  -|          
-b                                                   |          |                                                  -|          
-c                                                   |          |                                                  -|          
-d                                                   |          |                                                  -|          
-e                                                   |          |                                                  -|          
-x                                                   |          |                                                  -|          
-r                                                   |          |                                                  -|          
-j                                                   |          |                                                  -|          
-base                                                |          |                                                  -|          
-var1                                                |          |                                                  -|          
-y                                                   |          |                                                  -|          
-_0                                                  |    CTEENT|                                                  0|          
-_2                                                  |    CTEENT|                                                  2|          
-_a es mas grande que b                              |    CTETIP|                              a es mas grande que b|        20
-_a es mas chico o igual a b                         |    CTETIP|                         a es mas chico o igual a b|        25
-_3                                                  |    CTEENT|                                                  3|          
-_1                                                  |    CTEENT|                                                  1|          
-_5                                                  |    CTEENT|                                                  5|          
-_7                                                  |    CTEENT|                                                  7|          
-_4                                                  |    CTEENT|                                                  4|          
-_21                                                 |    CTEENT|                                                 21|          
-_100000                                             |    CTENUM|                                           99999.99|          
-_99                                                 |    CTENUM|                                                99.|          
-_0.9999                                             |    CTENUM|                                              .9999|          
-_1.1                                                |    CTENUM|                                                1.1|          
-_3.402e+038                                         |    CTENUM|          340200000000000000000000000000000000000.0|          
-_1.176e-038                                         |    CTENUM|        0.00000000000000000000000000000000000001176|          
-_0.125                                              |    CTENUM|                                 00000000000000.125|          
-_32767                                              |    CTEENT|                                              32767|          
-_125                                                |    CTEENT|                                  00000000000000125|          
-_@sdADaSjfla%dfg                                    |    CTETIP|                                    @sdADaSjfla%dfg|        14
-_asldk  fh sjf                                      |    CTETIP|                                      asldk  fh sjf|        12
-_12345678901234567890123456789012345678901234567890 |    CTETIP| 12345678901234567890123456789012345678901234567890|        49
-_a                                                  |    CTETIP|                                                  a|         0
-_a no es mas grande que b                           |    CTETIP|                           a no es mas grande que b|        23
-_a es mas grande que b y c es mas grande que b      |    CTETIP|      a es mas grande que b y c es mas grande que b|        44
-_a es mas grande que b o c es mas grande que b      |    CTETIP|      a es mas grande que b o c es mas grande que b|        44
-_9                                                  |    CTEENT|                                                  9|          
-_amarillo                                           |    CTETIP|                                           amarillo|         7
-_verde                                              |    CTETIP|                                              verde|         4
-_ewr                                                |    CTETIP|                                                ewr|         2
+                       NOMBRE                       | TIPODATO |                       VALOR                        | LONGITUD 
+----------------------------------------------------|----------|----------------------------------------------------|----------
+a1                                                  |   TIPONUM|                                                    |          
+b1                                                  |   TIPONUM|                                                    |          
+variable1                                           |   TIPOENT|                                                    |          
+p1                                                  |   TIPOCAD|                                                    |          
+p2                                                  |   TIPOCAD|                                                    |          
+p3                                                  |   TIPOCAD|                                                    |          
+a                                                   |   TIPOENT|                                                    |          
+b                                                   |   TIPOENT|                                                    |          
+c                                                   |   TIPOENT|                                                    |          
+d                                                   |   TIPOENT|                                                    |          
+e                                                   |   TIPOENT|                                                    |          
+x                                                   |   TIPOENT|                                                    |          
+r                                                   |   TIPOENT|                                                    |          
+j                                                   |   TIPOENT|                                                    |          
+base                                                |   TIPOCAD|                                                    |          
+var1                                                |   TIPOCAD|                                                    |          
+y                                                   |   TIPOCAD|                                                    |          
+_1.5                                                |   TIPONUM|                                                 1.5|          
+_999.                                               |   TIPONUM|                                                999.|          
+_.999                                               |   TIPONUM|                                                .999|          
+_2.5                                                |   TIPONUM|                                                 2.5|          

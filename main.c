@@ -27,15 +27,8 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    yyin = fopen(argv[1], "r");
-    
-    if (!yyin) {
-        perror("No se es posible abrir el archivo. \n");
-        exit(1);
-    }
-
-    if((yyin = fopen(argv[1], "rt"))==NULL)
-        printf("\nNo se puede abrir el archivo de prueba: %s\n", argv[1]);    
+    if((yyin = fopen(argv[1], "rt")) == NULL)
+        printf("No es posible abrir el archivo de prueba '%s'. \n", argv[1]);    
     else     
         yyparse();        
 
@@ -47,35 +40,48 @@ int main(int argc, char **argv) {
 }
 
 int validarRangoInt(char* cte) {
+
     int numero = atoi(cte);
     char nombre[6];
 
-    if((numero >= 0) && (numero <= SHRT_MAX)) {
+    if((numero >= 0) && (numero <= SHRT_MAX))
         printf("\nLexico:Constante entera valida: %s\n", cte);
-        sprintf(nombre, "_%d", numero);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "CTEENTERO", cte, "");
-    } else {
+    else {
         printf( "\nError lexico. Constante entera invalida: %s\n", yytext ); 
-        exit (0);
+        exit(5);
     }
 }
 
 int validarRangoFloat(char* cte) {
+    
     float numero = atof(cte);
     char nombre[41];
+    char aux[53];
+    char* punto;
 
-    if ((numero > FLT_MIN && numero < FLT_MAX)) {
+    if ((numero > FLT_MIN && numero < FLT_MAX))
         printf("\nLexico:Constante flotante valida: %s\n", cte);
-        sprintf(nombre, "_%g", numero);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "CTENUMEROCONCOMA", cte, "");
-    } else {
+    else {
         printf( "\nError lexico. Constante flotante invalida: %s\n", yytext ); 
-        exit (0);
+        exit(6);
     }
+
+	/*if(*cte == '.') {
+
+	    aux[0] = '0';
+	    strcat(aux, cte);
+	    strcpy(cte, aux);
+    }
+    
+    punto = strchr(cte, '.');
+
+    if (*(punto + 1) == '\0') {
+        int longitud = strlen(cte);
+        strncpy(aux, cte, longitud - 1);
+        aux[longitud] = '\0';
+        strcpy(cte, aux);
+        printf("%d - %s", longitud, cte);
+    }*/
 }
 
 int validarRangoString(char* cte) {
@@ -89,22 +95,22 @@ int validarRangoString(char* cte) {
     cadena[longitud] = '\0';
 
     if(longitud <= 50) {
-        printf("\nLexico:Constante String valida: \"%s\"\n", cadena);
-        sprintf(nombre, "_%s", cadena);
-
-        if(buscarEnTabla(nombre) == -1)
-            insertarEnTabla(nombre, "CTETIPOCADENITA", cadena, itoa((longitud - 1), auxLongitud, 10));
+        printf("\nLexico: Constante String valida: \"%s\"\n", cadena);
     } else {
         printf( "\nError lexico. Constante String invalida: %s\n", yytext ); 
-        exit (0);
+        exit(7);
     }
 }
 
 int insertarId(char* id) {
     
-    printf("\nLexico:Identificador: %s\n", yytext);
+    if((strlen(id)) <= 50)
+        printf("\nLexico:Identificador: %s\n", yytext);
     
-    if(buscarEnTabla(id) == -1)
-            insertarEnTabla(id, "", "-", "");
+    else {
+        
+        printf( "\nError lexico. Constante String invalida: %s\n", yytext ); 
+        exit(7);
+    }
 }
 

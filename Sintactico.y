@@ -7,6 +7,8 @@
 #include <string.h>
 #include "y.tab.h"
 #include "funcionesEspeciales.h"
+#include "tablaDeSimbolos.h"
+
 int yystopparser = 0;
 extern FILE *yyin;
 char *yytext;
@@ -14,20 +16,51 @@ char *yytext;
     int yyerror();
     int yylex();
 
-//Primitivas de la PI:
+//Funciones de código intermedio (polaca inversa):
 char* insertarPolInv(char*);
 void avanzar();
 int desapilarPos();
 void apilarPos(int);
 void insertarPosPI(int, int);
 char* quitarCom(char*);
+void intercambiarUltPos();
+void negarCom();
+int pilaVac(); 
+void validarTipoDato(char*);
+void eliminarTipoAct();
 void generarPolInv();
 
+//Funciones de código Assembler:
+void generarAsm();
+void imprimirHeader(FILE*);
+void imprimirVariables(FILE*);
+void generarFadd(FILE*);
+void generarFmul(FILE*);
+void generarFdiv(FILE*);
+void generarFsub(FILE*);
+void generarCmp(FILE*, char*);
+void generarAsig(FILE*);
+void generarWri(FILE*);
+//void generarRea(FILE*);
+void desapilarAsm(char*);
+void apilarAsm(char*);
+void agregarCerDec(char*);
+void agregarCerEnt(char*);
+void reemplazarPunto(char*);
+void darFormato(char*);
+
 //Variables auxiliares:
-char vectorPolInv[500][53];
+int posicionAct = 0, topePil = -1, posicion = -1, topeAsm = -1, cantidadVarTip, posicionIniTip;
+char vectorPolInv[1000][53];
 int pilaPolInv[50];
 char cadenaAux[5];
-int posicionAct = 0, topePil = -1, posicion = -1;
+char tipoDatoAct[8] = "SINTIPO";
+char tipoVar[8];
+char variablePil[20];
+char topePilAsm[53];
+char siguientePil[53];
+char pilaASM[1000][53];
+
 %}
 
 %union {
@@ -101,7 +134,8 @@ int posicionAct = 0, topePil = -1, posicion = -1;
 %%
 compOkey:
     programa {printf("\tSintactico: Compilacion OK. \n");
-    generarPolInv();};
+    generarPolInv();
+    generarAsm();}
 
 programa:
     sentenciaInit bloque {printf("\tSintactico: Programa. \n");}
@@ -122,81 +156,108 @@ sentencia:
 condicion:
     comparacion {printf("\tSintactico: Condicion simple. \n");}
     | comparacion OP_AND comparacion {printf("\tSintactico: Condicion doble. \n");}
-    | comparacion OP_OR comparacion {printf("\tSintactico: Condicion doble. \n");};
-    | OP_NOT comparacion {printf("\tSintactico: Condicion doble. \n");};;
+    | comparacion {negarCom();} OP_OR comparacion {printf("\tSintactico: Condicion doble. \n");
+        intercambiarUltPos();
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct, posicion);}
+    | OP_NOT comparacion {printf("\tSintactico: Condicion doble. \n");
+        {negarCom();}};
 
 comparacion:
     factor COMP_MAYOR factor {printf("\tSintactico: Comparacion mayor. \n");
         insertarPolInv("CMP");
         insertarPolInv("BLE");
         apilarPos(posicionAct);
-        avanzar();}
+        avanzar();
+        eliminarTipoAct();}
     | factor COMP_MENOR factor {printf("\tSintactico: Comparacion menor. \n");
         insertarPolInv("CMP");
         insertarPolInv("BGE");
         apilarPos(posicionAct);
-        avanzar();}
+        avanzar();
+        eliminarTipoAct();}
     | factor COMP_MAYORIGUAL factor {printf("\tSintactico: Comparacion mayor o igual. \n");
         insertarPolInv("CMP");
         insertarPolInv("BLT");
         apilarPos(posicionAct);
-        avanzar();}
+        avanzar();
+        eliminarTipoAct();}
     | factor COMP_MENORIGUAL factor {printf("\tSintactico: Comparacion menor o igual. \n");
         insertarPolInv("CMP");
         insertarPolInv("BGT");
         apilarPos(posicionAct);
-        avanzar();}
+        avanzar();
+        eliminarTipoAct();}
     | factor COMP_IGUAL factor {printf("\tSintactico: Comparacion igual. \n");
         insertarPolInv("CMP");
         insertarPolInv("BNE");
         apilarPos(posicionAct);
-        avanzar();}
+        avanzar();
+        eliminarTipoAct();}
     | factor COMP_DIST factor {printf("\tSintactico: Comparacion distinto. \n");
         insertarPolInv("CMP");
         insertarPolInv("BEQ");
         apilarPos(posicionAct);
-        avanzar();};
+        avanzar();
+        eliminarTipoAct();};
 
 sentenciaAsignacion:
-
     ID OP_AS expresion {printf("\tSintactico: Asignacion. \n");
         insertarPolInv($1);
-        insertarPolInv(":=");}
+        insertarPolInv(":=");
+        getTipoDato($1, tipoVar);
+        validarTipoDato(tipoVar);
+        eliminarTipoAct();}
     | ID OP_AS texto {printf("\tSintactico: Asignacion de texto. \n");
         insertarPolInv($1);
-        insertarPolInv(":=");};
+        insertarPolInv(":=");
+        getTipoDato($1, tipoVar);
+        validarTipoDato(tipoVar);
+        eliminarTipoAct();};
 
 texto:
     CTETIPOCADENITA {printf("\tSintactico: CTECADENITA es texto. \n");
-        insertarPolInv(quitarCom(yytext));};
+        insertarPolInv(quitarCom(yytext));
+        agregarConstanteStr($1);
+        validarTipoDato("TIPOCAD");};
 
 expresion:
     termino
     | expresion OP_RES termino {printf("\tSintactico: Expresion de resta. \n");
-        insertarPolInv("MENOS");}
+        insertarPolInv("-");}
     | expresion OP_SUM termino {printf("\tSintactico: Expresion de suma. \n");
-        insertarPolInv("MAS");};
+        insertarPolInv("+");};
 
 termino:
     factor
     | termino OP_DIV factor {printf("\tSintactico: Termino de division. \n");
-        insertarPolInv("DIVIDIR");}
+        insertarPolInv("/");}
     | termino OP_MUL factor {printf("\tSintactico: Termino de multiplicacion. \n");
-        insertarPolInv("POR");};
+        insertarPolInv("*");};
 
 factor:
     ID {printf("\tSintactico: ID es factor. \n");
-        insertarPolInv(yytext);}
+        insertarPolInv(yytext);
+        getTipoDato($1, tipoVar);
+        validarTipoDato(tipoVar);}
     | CTEENTERO {printf("\tSintactico: CTEENTERO es factor. \n");
-        insertarPolInv(yytext);}
+        insertarPolInv(yytext);
+        agregarConstanteInt($1);
+        validarTipoDato("TIPOENT");}
     | CTENUMEROCONCOMA {printf("\tSintactico: CTECONCOMA es factor. \n");
-        insertarPolInv(yytext);}
+        insertarPolInv(yytext);
+        agregarConstanteFlo(yytext);
+        validarTipoDato("TIPONUM");}
     | PA expresion PC {printf("\tSintactico: Expresion es factor. \n");};
 
 sentenciaIf:
     IF PA condicion PC LA bloque LC {printf("\tSintactico: If. \n");
         posicion = desapilarPos();
-        insertarPosPI(posicionAct, posicion);}
+        insertarPosPI(posicionAct, posicion);
+        if(!pilaVac()) {
+            posicion = desapilarPos();
+            insertarPosPI(posicionAct, posicion);
+        }}
     | IF PA condicion PC LA bloque LC ELSE {insertarPolInv("BI");
         posicion = desapilarPos();
         insertarPosPI(posicionAct + 1, posicion);
@@ -214,11 +275,15 @@ listaIniVar:
     | listaIniVar iniVar {printf("\tSintactico: Mas de una linea de tipo. \n");};
 
 iniVar:
-    variablesSeguidas DOSPUNTITOS tipo {printf("\tSintactico: Declaracion de tipo. \n");};
+    variablesSeguidas DOSPUNTITOS tipo {printf("\tSintactico: Declaracion de tipo. \n");
+        agregarTipoDato(yytext, cantidadVarTip, posicionIniTip);};
 
 variablesSeguidas:
-    ID {printf("\tSintactico: Una variable. \n");}
-    | variablesSeguidas COMA ID {printf("\tSintactico: Mas de una variable. \n");};
+    ID {printf("\tSintactico: Una variable. \n"); agregarVariable(yytext);
+        cantidadVarTip = 1;
+        posicionIniTip = getCantidadSimbolos() - 1;}
+    | variablesSeguidas COMA ID {printf("\tSintactico: Mas de una variable. \n"); agregarVariable(yytext);
+        cantidadVarTip++;};
 
 tipo:
     INT {printf("\tSintactico: Tipo entero. \n");}
@@ -228,14 +293,17 @@ tipo:
 sentenciaRead:
     READ PA ID PC {printf("\tSintactico: Read. \n");
         insertarPolInv($3);
-        insertarPolInv("READ");};
+        insertarPolInv("READ");
+        eliminarTipoAct();};
 
 sentenciaWrite:
     WRITE PA ID PC {printf("\tSintactico: Write de variable. \n");
         insertarPolInv($3);
-        insertarPolInv("IMP");};
+        insertarPolInv("WRITE");
+        eliminarTipoAct();}
     | WRITE PA texto PC {printf("\tSintactico: Write de texto. \n");
-        insertarPolInv("IMP");};
+        insertarPolInv("WRITE");
+        eliminarTipoAct();};
 
 sentenciaWhile:
     WHILE {apilarPos(posicionAct); insertarPolInv("ET");}
@@ -261,35 +329,36 @@ listaParametros:
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BLT");
-            insertarPolInv(itoa(posicionAct + 3, cadenaAux, 10));
-            insertarPolInv("BI");
+            insertarPolInv("BGT");
             apilarPos(posicionAct);
             avanzar();
+            //Inicio de rama verdadera del if(@ord == 1)
             insertarPolInv($5);
             insertarPolInv("@pal1");
             insertarPolInv(":=");
             insertarPolInv($7);
             insertarPolInv("@pal2");
             insertarPolInv(":=");
+            //Fin de rama verdadera del if(@ord == 1)
+            //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("-");
             insertarPolInv("@lon");
             insertarPolInv(":=");
-            insertarPolInv("@pos");
             insertarPolInv("0");
+            insertarPolInv("@pos");
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BGE");
+            insertarPolInv("BGT");
             apilarPos(posicionAct);
             avanzar();
-            insertarPolInv("@tem[@pos]");
             insertarPolInv("@pal1[@ini]");
+            insertarPolInv("@tem[@pos]");
             insertarPolInv(":=");
             insertarPolInv("@pos");
             insertarPolInv("1");
@@ -306,19 +375,19 @@ listaParametros:
             insertarPosPI(posicionAct + 1, posicion);
             posicion = desapilarPos();
             insertarPolInv(itoa(posicion, cadenaAux, 10));
-            insertarPolInv("@pos");
             insertarPolInv("0");
+            insertarPolInv("@pos");
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
-            insertarPolInv("@pal2");
+            insertarPolInv("@pal2[@pos]");
             insertarPolInv("'\\0'");
             insertarPolInv("CMP");
             insertarPolInv("BEQ");
             apilarPos(posicionAct);
             avanzar();
-            insertarPolInv("@res[@pos]");
             insertarPolInv("@pal2[@pos]");
+            insertarPolInv("@res[@pos]");
             insertarPolInv(":=");
             insertarPolInv("@pos");
             insertarPolInv("1");
@@ -330,8 +399,8 @@ listaParametros:
             insertarPosPI(posicionAct + 1, posicion);
             posicion = desapilarPos();
             insertarPolInv(itoa(posicion, cadenaAux, 10));
-            insertarPolInv("@aux");
             insertarPolInv("0");
+            insertarPolInv("@aux");
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
@@ -341,8 +410,8 @@ listaParametros:
             insertarPolInv("BLT");
             apilarPos(posicionAct);
             avanzar();
-            insertarPolInv("@res[@pos]");
             insertarPolInv("@tem[@aux]");
+            insertarPolInv("@res[@pos]");
             insertarPolInv(":=");
             insertarPolInv("@pos");
             insertarPolInv("1");
@@ -359,8 +428,8 @@ listaParametros:
             insertarPosPI(posicionAct + 1, posicion);
             posicion = desapilarPos();
             insertarPolInv(itoa(posicion, cadenaAux, 10));
-            insertarPolInv("@res[@pos]");
             insertarPolInv("'\\0'");
+            insertarPolInv("@res[@pos]");
             insertarPolInv(":=");
             posicion = desapilarPos();
             insertarPosPI(posicionAct, posicion);};
@@ -375,35 +444,36 @@ listaParametros:
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BLT");
-            insertarPolInv(itoa(posicionAct + 3, cadenaAux, 10));
-            insertarPolInv("BI");
+            insertarPolInv("BGT");
             apilarPos(posicionAct);
             avanzar();
+            //Inicio de rama falsa del if(@ord == 1)
             insertarPolInv($5);
             insertarPolInv("@pal2");
             insertarPolInv(":=");
             insertarPolInv($7);
             insertarPolInv("@pal1");
             insertarPolInv(":=");
-            insertarPolInv("@ini");
+            //Fin de rama falsa del if(@ord == 1)
+            //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
             insertarPolInv("@fin");
+            insertarPolInv("@ini");
             insertarPolInv("-");
             insertarPolInv("@lon");
             insertarPolInv(":=");
-            insertarPolInv("@pos");
             insertarPolInv("0");
+            insertarPolInv("@pos");
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
             insertarPolInv("@ini");
             insertarPolInv("@fin");
             insertarPolInv("CMP");
-            insertarPolInv("BGE");
+            insertarPolInv("BGT");
             apilarPos(posicionAct);
             avanzar();
-            insertarPolInv("@tem[@pos]");
             insertarPolInv("@pal1[@ini]");
+            insertarPolInv("@tem[@pos]");
             insertarPolInv(":=");
             insertarPolInv("@pos");
             insertarPolInv("1");
@@ -420,19 +490,19 @@ listaParametros:
             insertarPosPI(posicionAct + 1, posicion);
             posicion = desapilarPos();
             insertarPolInv(itoa(posicion, cadenaAux, 10));
-            insertarPolInv("@pos");
             insertarPolInv("0");
+            insertarPolInv("@pos");
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
-            insertarPolInv("@pal2");
+            insertarPolInv("@pal2[@pos]");
             insertarPolInv("'\\0'");
             insertarPolInv("CMP");
             insertarPolInv("BEQ");
             apilarPos(posicionAct);
             avanzar();
-            insertarPolInv("@res[@pos]");
             insertarPolInv("@pal2[@pos]");
+            insertarPolInv("@res[@pos]");
             insertarPolInv(":=");
             insertarPolInv("@pos");
             insertarPolInv("1");
@@ -444,8 +514,8 @@ listaParametros:
             insertarPosPI(posicionAct + 1, posicion);
             posicion = desapilarPos();
             insertarPolInv(itoa(posicion, cadenaAux, 10));
-            insertarPolInv("@aux");
             insertarPolInv("0");
+            insertarPolInv("@aux");
             insertarPolInv(":=");
             apilarPos(posicionAct); 
             insertarPolInv("ET");
@@ -455,8 +525,8 @@ listaParametros:
             insertarPolInv("BLT");
             apilarPos(posicionAct);
             avanzar();
-            insertarPolInv("@res[@pos]");
             insertarPolInv("@tem[@aux]");
+            insertarPolInv("@res[@pos]");
             insertarPolInv(":=");
             insertarPolInv("@pos");
             insertarPolInv("1");
@@ -473,8 +543,8 @@ listaParametros:
             insertarPosPI(posicionAct + 1, posicion);
             posicion = desapilarPos();
             insertarPolInv(itoa(posicion, cadenaAux, 10));
-            insertarPolInv("@res[@pos]");
             insertarPolInv("'\\0'");
+            insertarPolInv("@res[@pos]");
             insertarPolInv(":=");
             posicion = desapilarPos();
             insertarPosPI(posicionAct, posicion);};
@@ -483,14 +553,132 @@ sentenciaReorder:
     REORDER PA listaParametrosReorder PC {printf("\tSintactico: Reorder. \n");}
 
 listaParametrosReorder:
-    CA listaExpresiones CC COMA VERDADERO COMA CTEENTERO
-        {printf("\tSintactico:Lista de parametros Reorder. \n");}
-    | CA listaExpresiones CC COMA FALSO COMA CTEENTERO
-        {printf("\tSintactico:Lista de parametros Reorder. \n");};
+    CA listaExpresiones CC COMA VERDADERO COMA CTEENTERO {printf("\tSintactico:Lista de parametros Reorder. \n");
+        insertarPolInv($7);
+        insertarPolInv("@piv");
+        insertarPolInv(":=");
+        insertarPolInv("@piv");
+        insertarPolInv("@can");
+        insertarPolInv("CMP");
+        insertarPolInv("BGE");
+        apilarPos(posicionAct);
+        avanzar();
+        //Inicio de rama verdadera del if (@dir == 1)
+        insertarPolInv("0");
+        insertarPolInv("@ori");
+        insertarPolInv(":=");
+        insertarPolInv("@piv");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        //Fin de rama verdadera del if (@dir == 1)
+        //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
+        apilarPos(posicionAct);
+        insertarPolInv("ET");
+        insertarPolInv("@ori");
+        insertarPolInv("@des");
+        insertarPolInv("CMP");
+        insertarPolInv("BGE");
+        apilarPos(posicionAct);
+        avanzar();
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv("@aux");
+        insertarPolInv(":=");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv(":=");
+        insertarPolInv("@aux");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv(":=");
+        insertarPolInv("@ori");
+        insertarPolInv("1");
+        insertarPolInv("+");
+        insertarPolInv("@ori");
+        insertarPolInv(":=");
+        insertarPolInv("@des");
+        insertarPolInv("1");
+        insertarPolInv("-");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        insertarPolInv("BI");
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct + 1, posicion);
+        posicion = desapilarPos();
+        insertarPolInv(itoa(posicion, cadenaAux, 10));
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct, posicion);}
+    | CA listaExpresiones CC COMA FALSO COMA CTEENTERO {printf("\tSintactico:Lista de parametros Reorder. \n");
+        insertarPolInv($7);
+        insertarPolInv("@piv");
+        insertarPolInv(":=");
+        insertarPolInv("@piv");
+        insertarPolInv("@can");
+        insertarPolInv("CMP");
+        insertarPolInv("BGE");
+        apilarPos(posicionAct);
+        avanzar();
+        //Inicio de rama falsa del if (@dir == 1)
+        insertarPolInv("@piv");
+        insertarPolInv("@ori");
+        insertarPolInv(":=");
+        insertarPolInv("@can");
+        insertarPolInv("1");
+        insertarPolInv("-");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        //Fin de rama falsa del if (@dir == 1)
+        //El siguiente código sólo existiría una vez en el programa cuando se unifiquen las dos reglas.
+        apilarPos(posicionAct);
+        insertarPolInv("ET");
+        insertarPolInv("@ori");
+        insertarPolInv("@des");
+        insertarPolInv("CMP");
+        insertarPolInv("@BGE");
+        apilarPos(posicionAct);
+        avanzar();
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv("@aux");
+        insertarPolInv(":=");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv("@lis[@ori]");
+        insertarPolInv(":=");
+        insertarPolInv("@aux");
+        insertarPolInv("@lis[@des]");
+        insertarPolInv(":=");
+        insertarPolInv("@ori");
+        insertarPolInv("1");
+        insertarPolInv("+");
+        insertarPolInv("@ori");
+        insertarPolInv(":=");
+        insertarPolInv("@des");
+        insertarPolInv("1");
+        insertarPolInv("-");
+        insertarPolInv("@des");
+        insertarPolInv(":=");
+        insertarPolInv("BI");
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct + 1, posicion);
+        posicion = desapilarPos();
+        insertarPolInv(itoa(posicion, cadenaAux, 10));
+        posicion = desapilarPos();
+        insertarPosPI(posicionAct, posicion);};
 
 listaExpresiones:
-    expresion {printf("\tSintactico: Expresion. \n");}
-    | listaExpresiones COMA expresion {printf("\tSintactico: Expresiones. \n");};
+    expresion {printf("\tSintactico: Expresion. \n");
+        insertarPolInv("@lis[0]");
+        insertarPolInv(":=");
+        insertarPolInv("1");
+        insertarPolInv("@can");
+        insertarPolInv(":=");
+        eliminarTipoAct();}
+    | listaExpresiones COMA expresion {printf("\tSintactico: Expresiones. \n");
+        insertarPolInv("@lis[@can]");
+        insertarPolInv(":=");
+        insertarPolInv("@can");
+        insertarPolInv("1");
+        insertarPolInv("+");
+        insertarPolInv("@can");
+        insertarPolInv(":=");
+        eliminarTipoAct();};
 %%
 
 int yyerror(void)
@@ -524,14 +712,25 @@ void apilarPos(int numero) {
 	pilaPolInv[topePil] = numero;
 }
 
+void intercambiarUltPos() {
+    int aux = pilaPolInv[topePil];
+    pilaPolInv[topePil] = pilaPolInv[topePil - 1];
+    pilaPolInv[topePil - 1] = aux;
+}
+
+int pilaVac() {
+    if(topePil > -1)
+        return 0;
+    return 1;
+}
+
 int desapilarPos() {
-	if(topePil> -1) {
+	if(topePil > -1) {
 	    int retorno = pilaPolInv[topePil];
 	    topePil--;
 	    return retorno;
 	}
-	else
-	    return -1;
+	return -1;
 }
 
 void insertarPosPI(int numero, int posicion) {
@@ -549,12 +748,724 @@ char* quitarCom(char* cte) {
     return cte;
 }
 
+void negarCom() {
+	char comparador[5];
+	strcpy(comparador, vectorPolInv[posicionAct - 2]);
+
+	if(strcmp(comparador, "BGE") == 0) {
+		strcpy(vectorPolInv[posicionAct - 2], "BLT");
+		return;
+	}
+
+	if(strcmp(comparador, "BLT") == 0) {
+		strcpy(vectorPolInv[posicionAct - 2], "BGE");
+		return;
+	}
+
+	if(strcmp(comparador, "BLE") == 0) {
+		strcpy(vectorPolInv[posicionAct - 2], "BGT");
+		return;
+	}
+
+	if(strcmp(comparador, "BGT") == 0) {
+		strcpy(vectorPolInv[posicionAct - 2], "BLE");
+		return;
+	}
+
+	if(strcmp(comparador, "BEQ") == 0) {
+		strcpy(vectorPolInv[posicionAct - 2], "BNE");
+		return;
+	}
+
+	if(strcmp(comparador, "BNE") == 0) {
+		strcpy(vectorPolInv[posicionAct - 2], "BEQ");
+		return;
+	}
+}
+
+void validarTipoDato(char* tipoDato) {
+  
+	  if(strcmp(tipoDatoAct, "SINTIPO") == 0) {
+	    	strncpy(tipoDatoAct, tipoDato, 8);
+		    return;
+	  }
+
+	  if(strcmp(tipoDatoAct, tipoDato) != 0){
+		    printf("Error semantico: El tipo de dato '%s' no es compatible con '%s'. \n", tipoDatoAct, tipoDato);
+		    exit(4);
+	  }
+}
+
+void eliminarTipoAct() {
+    strncpy(tipoDatoAct, "SINTIPO", 8);
+}
+
 void generarPolInv() {
-    FILE *fp = fopen("intermediate-code.txt", "w+t");
-    fprintf(fp, "|----|---------------------------------------------------|\n");
+
+    FILE* fCI = fopen("intermediate-code.txt", "w+t");
+
+    fprintf(fCI, "|----|---------------------------------------------------|\n");
+
     int i;
+   
     for (i = 0; i < posicionAct; i++) {
-        fprintf(fp, "|%-*d|%*s|\r", 4, i, 51, vectorPolInv[i]);
-        fprintf(fp, "|----|---------------------------------------------------|\n");
+
+        fprintf(fCI, "|%-*d|%*s|\r", 4, i, 51, vectorPolInv[i]);
+        fprintf(fCI, "|----|---------------------------------------------------|\n");
     }
+}
+
+void imprimirHeader(FILE* fPun) {
+	
+    //fprintf(fPun,"include macros2.asm\ninclude number.asm\n");
+    fprintf(fPun,".MODEL LARGE\n.386\n.STACK 200h\n.DATA\n\n");//;MAXTEXTSIZE equ 50\n \n.DATA\n\n.DATA\n");
+}
+
+void imprimirVariables(FILE* fPun) { 
+
+	char valor[52], nombre[52], auxNombre[52];
+    char *punto;
+    float aux;
+	int i, ultimoSimbolo = getCantidadSimbolos();
+    t_simbolo auxSimbolo;
+
+	for(i = 0; i < ultimoSimbolo; i++) {
+
+        auxSimbolo = getSimboloDeTabla(i);
+        strcpy(valor, auxSimbolo.valor);
+
+		if(auxSimbolo.nombre[0] == '_') {                
+
+            if(strcmp(auxSimbolo.tipoDato, "TIPONUM") == 0) {
+
+                if(auxSimbolo.nombre[1] == '.') {
+
+                    strcpy(nombre, auxSimbolo.nombre + 2);
+                    strcpy(auxNombre, "_cte0_");
+                    strcat(auxNombre, nombre);
+                    printf("%s", auxNombre);
+                }
+                
+                /*if(auxSimbolo.nombre[strlen(auxSimbolo.nombre) - 1] == '.') {
+
+                    strcpy(auxNombre, "_0");
+                    strncpy(nombre, auxSimbolo.nombre, (strlen(auxSimbolo.nombre) - 2));
+                    strcat(nombre, auxNombre);
+                    strcpy(auxNombre, nombre);
+                    printf("%s", auxNombre);
+                }
+
+                fprintf(fPun,"%s\t%s\t%.4g\n", auxNombre, "dd", aux);
+            }
+            else {
+
+                    fprintf(fPun,"%s\t%s\t%s\n", auxNombre, "dd", valor);
+                }
+
+            strcpy(nombre, auxSimbolo.nombre + 1);
+            strcpy(auxNombre, "_cte");
+            strcat(auxNombre, nombre);
+            printf("%s", auxNombre);
+            }
+        
+		else {
+
+			strcpy(valor, "?");
+            fprintf(fPun,"%s\t%s\t%s\n", auxSimbolo.nombre, "dd", valor);
+        }
+	}*/}}}	
+	
+	//fprintf(fPun, "_@AUX dd ?\n");
+	fprintf(fPun, "\n.CODE\n"); //START:\n");
+	fprintf(fPun, "mov AX,@DATA\nmov DS,AX\nmov es,ax\n\n");
+}
+
+void apilarAsm(char *cadena) {
+	
+    topeAsm++;
+	strcpy(pilaASM[topeAsm], cadena);
+}
+
+void desapilarAsm(char *cadena) {
+	
+    strcpy(cadena, pilaASM[topeAsm]);
+	topeAsm--;
+}
+
+void reemplazarPunto(char *numero) {
+
+    char *punto;
+    
+    punto = strchr(numero, '.');
+    *punto = '_';
+    
+    return;
+}
+
+void generarFadd(FILE *fPun) {
+	
+    int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(topePilAsm, auxTipo);
+ 
+    if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+        agregarCerDec(topePilAsm);
+        agregarCerEnt(topePilAsm);
+        reemplazarPunto(topePilAsm);
+    }
+
+    fprintf(fPun, "FLD _cte%s\n", topePilAsm);
+	getTipoDato(siguientePil, auxTipo);
+
+    if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+        agregarCerEnt(siguientePil);
+        agregarCerDec(siguientePil);
+        reemplazarPunto(siguientePil);
+    }
+        
+    fprintf(fPun, "FLD _cte%s\n", siguientePil);
+	fprintf(fPun, "%s\n", "FADD");
+	//fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarFmul(FILE *fPun) {
+
+	int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+
+	if(strcmp(auxTipo, "TIPONUM") == 0) {
+
+		//agregarCero(siguientePil);
+
+		for (i = 0; i < strlen(siguientePil); i++){
+			
+            if (siguientePil[i] == '.') {
+
+				siguientePil[i] = '_';
+			
+            	if(siguientePil[i+1] == '\0') {
+
+					siguientePil[i + 1] = '0';
+					siguientePil[i + 2] = '\0';
+				}
+		    }
+		}
+	}
+
+    fprintf(fPun, "FLD _%s\n", siguientePil);
+	getTipoDato(topePilAsm, auxTipo);
+
+	if(strcmp(auxTipo, "TIPONUM") == 0) {
+		
+        //agregarCero(topePilAsm);
+			
+        for (i = 0; i < strlen(topePilAsm); i++) {
+			
+        	if (topePilAsm[i] == '.') {
+			
+        		topePilAsm[i] = '_';
+    
+           		if(topePilAsm[i + 1] == '\0') {
+
+					topePilAsm[i + 1] = '0';
+					topePilAsm[i + 2] = '\0';
+				}
+			}
+		}		
+	}
+	
+    fprintf(fPun, "FMUL _%s\n", topePilAsm);
+	fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarFdiv(FILE *fPun) {
+	
+	int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+    
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", siguientePil);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(siguientePil);
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}
+	}
+
+	getTipoDato(topePilAsm, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FIDV _%s\n", topePilAsm);
+	}else{
+		if(strcmp(auxTipo, "TIPONNUM") == 0){
+		//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FDIV _%s\n", topePilAsm);
+		}
+	}
+
+	fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarCmp(FILE *fPun, char *linea) {
+
+	char comparador[7];
+	int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", siguientePil);
+	}else{
+		//agregarCero(siguientePil);
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}else{
+		//agregarCero(siguientePil);
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}
+	}
+	getTipoDato(topePilAsm, auxTipo);
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", topePilAsm);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", topePilAsm);
+		}else{
+			//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", topePilAsm);
+		}
+	}
+	fprintf(fPun, "FXCH \nFCOMP \nfstsw ax\nsahf\n");	
+}
+
+void generarAsig(FILE *fPun) {
+
+	int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(siguientePil, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0)
+		fprintf(fPun, "FLD _%s\n", siguientePil);
+
+	else if(strcmp(auxTipo, "TIPONUM") == 0) {
+		
+        //agregarCero(siguientePil);
+        //agregarEntero(siguientePil);
+
+		/*for(i = 0; i < strlen(siguientePil); i++) {
+			
+            if (siguientePil[i] == '.') {
+
+				siguientePil[i] = '_';
+				
+                if(siguientePil[i + 1] == '\0') {
+				
+                	siguientePil[i + 1] = '0';
+					siguientePil[i + 2] = '\0';
+				}
+			}
+		}
+    
+    agregarEntero(siguientePila);
+    }*/
+		
+        fprintf(fPun, "FLD _%s\n", siguientePil);
+    } 
+    else if(strcmp(auxTipo, "TIPOCAD") == 0) {
+		
+        for (i = 0; i < strlen(siguientePil); i++) {
+			
+            if (siguientePil[i] == '\'') 
+				siguientePil[i] = '_';
+		}
+
+        fprintf(fPun, "LEA EAX, %s\n", siguientePil);
+	} 
+    else { 
+		
+        //agregarCero(siguientePil);
+		
+        for(i = 0; i < strlen(siguientePil); i++) {
+					
+            if(siguientePil[i] == '.') {
+				
+                siguientePil[i] = '_';
+				
+                if(siguientePil[i + 1] == '\0') {
+					
+                    siguientePil[i + 1] = '0';
+                    siguientePil[i + 2] = '\0';
+				}
+			}
+		}
+
+		fprintf(fPun, "FLD _%s\n", siguientePil);
+	}
+
+	getTipoDato(topePilAsm, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0)
+		fprintf(fPun, "FSTP _%s\n", topePilAsm);
+
+	else if(strcmp(auxTipo, "TIPONUM") == 0) {
+		
+        //agregarCero(siguientePil);
+
+		for(i = 0; i < strlen(topePilAsm); i++){
+			
+            if(topePilAsm[i] == '.') {
+				
+                topePilAsm[i] = '_';
+				
+                if(topePilAsm[i + 1] == '\0') {
+					
+                    topePilAsm[i + 1] = '0';
+					topePilAsm[i + 2] = '\0';
+				}
+			}
+        }
+
+        fprintf(fPun, "FSTP _%s\n", topePilAsm);
+    }
+	else if(strcmp(auxTipo, "TIPOCAD") == 0) {
+			
+        for(i = 0; i < strlen(topePilAsm); i++) {
+			
+            if (topePilAsm[i] == '\'')
+				topePilAsm[i] = '_';
+		}
+			
+        fprintf(fPun, "MOV %s, EAX\n", topePilAsm);
+		//fprintf(final, "CALL COPIAR\n"); 
+	}
+    else {
+	    
+        //agregarCero(topePilAsm);
+		
+        for(i = 0; i < strlen(topePilAsm); i++) {
+				
+            if (topePilAsm[i] == '.') {
+					
+               topePilAsm[i] = '_';
+		
+        		if(topePilAsm[i + 1] == '\0') {
+		
+        			topePilAsm[i+1] = '0';
+					topePilAsm[i+2] = '\0';
+				}
+			}
+		}
+		
+        fprintf(fPun, "FSTP _%s\n", topePilAsm);
+    }
+}	
+
+void darFormato(char* cadena){
+
+int longitud = strlen(cadena);
+
+
+}
+
+void agregarCerEnt(char *cadena) {
+	
+    char aux[50];
+
+	if(cadena[(strlen(cadena)) - 1] != '_') 
+        return;
+    
+    strcpy(aux, "0\0");
+	strcat(cadena, aux);
+    printf("Posterior: %s ", cadena);    
+}
+
+void agregarCerDec(char *cadena) {
+	
+    char aux[50];
+
+	if(*cadena != '_')
+		return;
+
+	strcpy(aux, "0");
+	strcat(aux, cadena);
+	strcpy(cadena, aux);
+}
+
+void generarFsub(FILE *fPun){
+
+	int i;
+    char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	desapilarAsm(siguientePil);
+	getTipoDato(topePilAsm, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", topePilAsm);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", topePilAsm);
+		}
+	}
+
+	getTipoDato(siguientePil, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "FILD _%s\n", siguientePil);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(siguientePil);
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}else{
+		//agregarCero(siguientePil);
+			for (i=0;i<strlen(siguientePil);i++){
+				if (siguientePil[i] == '.'){
+					siguientePil[i] = '_';
+					if( siguientePil[i+1] == '\0')
+					{
+						siguientePil[i+1] = '0';
+						siguientePil[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "FLD _%s\n", siguientePil);
+		}
+	}
+
+	fprintf(fPun, "FSUB\n"); //St(0),St(1)\n");
+	fprintf(fPun, "FSTP _@AUX\n");	
+	apilarAsm("@AUX");
+}
+
+void generarWri(FILE *fPun){
+	int i;
+	char auxTipo[8];
+
+	desapilarAsm(topePilAsm);
+	getTipoDato(topePilAsm, auxTipo);
+
+	if(strcmp(auxTipo, "TIPOENT") == 0){
+		fprintf(fPun, "IMP Integer _%s\n", topePilAsm);
+	}else{
+		if(strcmp(auxTipo, "TIPONUM") == 0){
+		//agregarCero(topePilAsm);
+			for (i=0;i<strlen(topePilAsm);i++){
+				if (topePilAsm[i] == '.'){
+					topePilAsm[i] = '_';
+					if( topePilAsm[i+1] == '\0')
+					{
+						topePilAsm[i+1] = '0';
+						topePilAsm[i+2] = '\0';
+					}
+				}
+			}
+			fprintf(fPun, "IMP Float _%s, 2\n", topePilAsm);
+		}
+		else{ 
+				fprintf(fPun, "IMP String _%s, 2\n", topePilAsm);
+		}
+	}
+	fprintf(fPun, "NEWLINE\n");
+}
+
+/*void grabarSaltosEnArch(FILE *fPun) {
+	
+    int i = 0;
+	while(i<indiceVecSaltos){
+	fprintf(fPun,"\n%s\n",vecSaltos[i]);
+	i++;
+	}
+}*/
+
+void generarAsm() {
+
+	FILE* fCA = fopen("final.asm","w+t");
+	
+	char linea[52];
+	char cmp[10] = "FCOMP";
+    int i;
+
+	imprimirHeader(fCA);
+	imprimirVariables(fCA);
+
+	for (i = 0; i < posicionAct; i++) {
+
+		strcpy(variablePil, vectorPolInv[i]);
+		printf("Contenido de la polaca inversa:\t%s\n", variablePil);
+
+		if(strcmp(variablePil, "+") == 0)
+			generarFadd(fCA);
+		else if(strcmp(variablePil, "*") == 0)
+            generarFmul(fCA);
+        else if(strcmp(variablePil, "-") == 0)
+			generarFsub(fCA);
+		else if(strcmp(variablePil, "/") == 0)
+			generarFdiv(fCA);
+		else if(strcmp(variablePil, ":=") == 0)
+			generarAsig(fCA);
+		else if(strcmp(variablePil, "WRITE") == 0)
+			generarWri(fCA);
+		/*else if(strcmp(variablePil, "READ") == 0 )
+			generarRea(fCA);*/
+		else if(strcmp(variablePil, "CMP") == 0)
+			generarCmp(fCA, variablePil);
+		else if(strcmp(variablePil, "BGE") == 0)
+			fprintf(fCA, "JNB ");
+		else if(strcmp(variablePil, "BGT") == 0)
+			fprintf(fCA, "JNBE ");
+		else if(strcmp(variablePil, "BLE") == 0)
+			fprintf(fCA, "JNA ");
+		else if(strcmp(variablePil, "BEQ") == 0)
+			fprintf(fCA, "JE ");
+		else if(strcmp(variablePil,"BNE") == 0)
+			fprintf(fCA,"JNE ");
+		else if(strcmp(variablePil, "BLT") == 0)
+			fprintf(fCA, "JNAE ");
+		else if(strstr(variablePil, ":"))
+			fprintf(fCA,"%s\n",variablePil);
+		else if(strstr(variablePil, "ET") && strstr(variablePil, ":") == NULL)
+			fprintf(fCA, "%s\n", variablePil);
+		else if(strcmp(variablePil, "BI") == 0)
+			fprintf(fCA, "JMP ");
+		else
+			apilarAsm(variablePil);
+	}
+
+	// grabarSaltosEnArch(fCA);
+
+	fprintf(fCA,"\nmov ax,4c00h\n" );
+    //fprintf(final,"mov al,0\n" );
+    fprintf(fCA,"int 21h\n" );
+
+	/*fprintf(final,"\nSTRLEN PROC NEAR\n");
+	fprintf(final,"\tmov BX,0\n");
+	fprintf(final,"\nSTRL01:\n");
+	fprintf(final,"\tcmp BYTE PTR [SI+BX],'$'\n");
+	fprintf(final,"\tje STREND\n");
+	fprintf(final,"\tinc BX\n");
+	fprintf(final,"\tjmp STRL01\n");
+	fprintf(final,"\nSTREND:\n");
+	fprintf(final,"\tret\n");
+	fprintf(final,"\nSTRLEN ENDP\n");
+	fprintf(final,"\nCOPIAR PROC NEAR\n");
+	fprintf(final,"\tcall STRLEN\n");
+	fprintf(final,"\tcmp BX,MAXTEXTSIZE\n");
+	fprintf(final,"\tjle COPIARSIZEOK\n");
+	fprintf(final,"\tmov BX,MAXTEXTSIZE\n");
+	fprintf(final,"\nCOPIARSIZEOK:\n");
+	fprintf(final,"\tmov CX,BX\n");
+	fprintf(final,"\tcld\n");
+	fprintf(final,"\trep movsb\n");
+	fprintf(final,"\tmov al,'$'\n");
+	fprintf(final,"\tmov BYTE PTR [DI],al\n");
+	fprintf(final,"\tret\n");
+	fprintf(final,"\nCOPIAR ENDP\n");
+	fprintf(final,"\nEND START\n");*/
+
+    fprintf(fCA,"End\n");
+	fclose(fCA);
 }
