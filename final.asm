@@ -1,15 +1,15 @@
 .MODEL LARGE
 .386
 .STACK 200h
-MAXTEXTSIZE equ 50
+MAXTEXTSIZE equ 255
 
 .DATA
 a1 dd ?
 b1 dd ?
 variable1 dd ?
-p1 dd ?
-p2 dd ?
-p3 dd ?
+p1 db MAXTEXTSIZE dup('?')
+p2 db MAXTEXTSIZE dup('?')
+p3 db MAXTEXTSIZE dup('?')
 a dd ?
 b dd ?
 c dd ?
@@ -18,9 +18,9 @@ e dd ?
 x dd ?
 r dd ?
 j dd ?
-base dd ?
-var1 dd ?
-y dd ?
+base db MAXTEXTSIZE dup('?')
+var1 db MAXTEXTSIZE dup('?')
+y db MAXTEXTSIZE dup('?')
 _1.5 dd 1.5
 _999. dd 999.
 _.999 dd .999
@@ -47,12 +47,6 @@ _9 dd 9
 @des dd ?
 @aux dd ?
 @piv dd ?
-
-.CODE
-mov AX,@DATA
-mov DS,AX
-mov es,ax
-
 
 .CODE
 START:

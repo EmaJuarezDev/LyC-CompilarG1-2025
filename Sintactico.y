@@ -841,55 +841,53 @@ void imprimirHeader(FILE* fPun) {
     fprintf(fPun, ".MODEL LARGE\n");
     fprintf(fPun, ".386\n");
     fprintf(fPun, ".STACK 200h\n");
-    fprintf(fPun, "MAXTEXTSIZE equ 50\n\n"); // Tamaño máximo de 50 caracteres
+    fprintf(fPun, "MAXTEXTSIZE equ 255\n\n"); // Tamaño máximo de 50 caracteres
     fprintf(fPun, ".DATA\n"); // Solo una directiva .DATA
 }
 
 void imprimirVariables(FILE* fPun) { 
-	char valor[50];
+    char valor[100];
     char tipoAsm[10];
     char auxCteStr[100];
-    char *punto;
-    float aux;
-	int i, ultimoSimbolo = getCantidadSimbolos();
+    int i, ultimoSimbolo = getCantidadSimbolos();
     t_simbolo sim;
 
-	for(i = 0; i < ultimoSimbolo; i++) {
+    for (i = 0; i < ultimoSimbolo; i++) {
         sim = getSimboloDeTabla(i);
-        
+
         // Por defecto, asumimos tipo 'dd' (dato doble palabra)
         strcpy(tipoAsm, "dd");
+        strcpy(valor, "?");  // Valor por defecto para variables numéricas
 
         // Constantes tipo ENTERO
         if (strncmp(sim.tipoDato, "TIPOENT", 7) == 0 && sim.nombre[0] == '_') {
-            strcpy(valor, sim.valor);  // valor ya está como string
+            strcpy(valor, sim.valor);
         }
 
         // Constantes tipo FLOAT
         else if (strncmp(sim.tipoDato, "TIPONUM", 7) == 0 && sim.nombre[0] == '_') {
-            strcpy(valor, sim.valor);  // valor ya como string (e.g. 3.14)
+            strcpy(valor, sim.valor);
         }
 
         // Constantes tipo STRING (TIPOCAD)
         else if (strncmp(sim.tipoDato, "TIPOCAD", 7) == 0 && sim.nombre[0] == '_') {
-            // Formato: db "texto", "$"
             strcpy(tipoAsm, "db");
             snprintf(auxCteStr, sizeof(auxCteStr), "\"%s\", \"$\"", sim.valor);
             strcpy(valor, auxCteStr);
         }
 
-        // Variables (no comienzan con '_')
-        else {
-            strcpy(valor, "?");  // Las variables no tienen valor asignado
+        // Variables tipo STRING (TIPOCAD, no comienzan con '_')
+        else if (strncmp(sim.tipoDato, "TIPOCAD", 7) == 0) {
+            strcpy(tipoAsm, "db");
+            strcpy(valor, "MAXTEXTSIZE dup('?')");
         }
 
+        // Resto de variables se quedan con tipoAsm = "dd" y valor = "?"
+        
         fprintf(fPun, "%s %s %s\n", sim.nombre, tipoAsm, valor);
+    }
 
-    }	
-	
-	//fprintf(fPun, "_@AUX dd ?\n");
-	fprintf(fPun, "\n.CODE\n"); //START:\n");
-	fprintf(fPun, "mov AX,@DATA\nmov DS,AX\nmov es,ax\n\n");
+    //fprintf(fPun, "_@AUX dd ?\n");
 }
 
 void apilarAsm(char *cadena) {
@@ -1300,7 +1298,7 @@ void generarAsig(FILE *fPun) {
 		
         fprintf(fPun, "FSTP _%s\n", topePilAsm);
     }
-}*/	
+}*/
 
 void darFormato(char* cadena){
 
@@ -1479,10 +1477,10 @@ void generarAsm() {
 	char cmp[10] = "FCOMP";
     int i;
 
-	imprimirHeader(fCA);
+    imprimirHeader(fCA);
 	imprimirVariables(fCA);
 
-    // ===================================================================
+	// ===================================================================
     // Le decimos a assembler que empiece el código y defina el punto de entrada (START)
     fprintf(fCA, "\n.CODE\n");
     fprintf(fCA, "START:\n");
@@ -1493,7 +1491,7 @@ void generarAsm() {
     fprintf(fCA, "\tmov es, ax\n\n");  // Copia la dirección a ES
     // ===================================================================
 
-	for (i = 0; i < posicionAct; i++) {
+   	for (i = 0; i < posicionAct; i++) {
 
 		strcpy(variablePil, vectorPolInv[i]);
 		printf("Contenido de la polaca inversa:\t%s\n", variablePil);
