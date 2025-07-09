@@ -5,7 +5,6 @@
 #include <limits.h>
 #include <float.h>
 #include "tablaDeSimbolos.h"
-#include "funcionesEspeciales.h"
 #include "y.tab.h"
 
 extern FILE  *yyin;

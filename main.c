@@ -4,7 +4,6 @@
 #include <limits.h>
 #include <float.h>
 #include "tablaDeSimbolos.h"
-#include "funcionesEspeciales.h"
 
 extern FILE  *yyin;
 /*extern yylval;*/
@@ -40,6 +39,7 @@ int main(int argc, char **argv) {
 }
 
 int validarRangoInt(char* cte) {
+
     int numero = atoi(cte);
     char nombre[6];
 
@@ -52,8 +52,11 @@ int validarRangoInt(char* cte) {
 }
 
 int validarRangoFloat(char* cte) {
+    
     float numero = atof(cte);
     char nombre[41];
+    char aux[53];
+    char* punto;
 
     if ((numero > FLT_MIN && numero < FLT_MAX))
         printf("\nLexico:Constante flotante valida: %s\n", cte);
@@ -61,6 +64,7 @@ int validarRangoFloat(char* cte) {
         printf( "\nError lexico. Constante flotante invalida: %s\n", yytext ); 
         exit(6);
     }
+    
 }
 
 int validarRangoString(char* cte) {
@@ -82,9 +86,11 @@ int validarRangoString(char* cte) {
 }
 
 int insertarId(char* id) {
+    
     if((strlen(id)) <= 50)
-        printf("\nLexico:Identificador: %s\n", yytext);
+        printf("\nLexico:Identificador: %s\n", yytext);   
     else {
+        
         printf( "\nError lexico. Constante String invalida: %s\n", yytext ); 
         exit(7);
     }
