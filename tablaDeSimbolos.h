@@ -7,21 +7,23 @@
 #define TAM_LEXEMA 50
 #endif
 
-void agregarVariable(char*);
-int buscarEnTabla(char*);
-int getCantidadSimbolos();
-void agregarConstanteInt(char*);
-void agregarConstanteFlo(char*);
-void agregarConstanteStr(char*);
-void getTipoDato(char*, char*);
-void agregarTipoDato(char*, int, int);
-void generarArchivo();
-
 typedef struct t_simbolo {
 	char nombre[TAM_LEXEMA + 2];
  	char tipoDato[8];
  	char valor[TAM_LEXEMA + 2];
  	char longitud[4];
 } t_simbolo;
+
+void agregarVariable(char*);
+int buscarEnTabla(char*);
+int getCantidadSimbolos();
+t_simbolo getSimboloDeTabla(int);
+void agregarConstanteInt(char*);
+void agregarConstanteFlo(char*);
+void agregarConstanteStr(char*);
+void getTipoDato(char*, char*);
+void agregarTipoDato(char*, int, int);
+int esVariable(char*); 
+void generarArchivo();
 
 #endif

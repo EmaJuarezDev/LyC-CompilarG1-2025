@@ -4,6 +4,7 @@
 a1                                                  |   TIPONUM|                                                    |          
 b1                                                  |   TIPONUM|                                                    |          
 variable1                                           |   TIPOENT|                                                    |          
+var1                                                |   TIPOENT|                                                    |          
 p1                                                  |   TIPOCAD|                                                    |          
 p2                                                  |   TIPOCAD|                                                    |          
 p3                                                  |   TIPOCAD|                                                    |          
@@ -15,36 +16,26 @@ e                                                   |   TIPOENT|                
 x                                                   |   TIPOENT|                                                    |          
 r                                                   |   TIPOENT|                                                    |          
 j                                                   |   TIPOENT|                                                    |          
+z                                                   |   TIPOENT|                                                    |          
+f                                                   |   TIPOENT|                                                    |          
 base                                                |   TIPOCAD|                                                    |          
-var1                                                |   TIPOCAD|                                                    |          
 y                                                   |   TIPOCAD|                                                    |          
-_0                                                  |   TIPOENT|                                                   0|          
-_2                                                  |   TIPOENT|                                                   2|          
-_a es mas grande que b                              |   TIPOCAD|                               a es mas grande que b|        21
-_a es mas chico o igual a b                         |   TIPOCAD|                          a es mas chico o igual a b|        26
-_3                                                  |   TIPOENT|                                                   3|          
-_1                                                  |   TIPOENT|                                                   1|          
-_5                                                  |   TIPOENT|                                                   5|          
-_7                                                  |   TIPOENT|                                                   7|          
-_4                                                  |   TIPOENT|                                                   4|          
-_21                                                 |   TIPOENT|                                                  21|          
 _99999.99                                           |   TIPONUM|                                            99999.99|          
 _99.                                                |   TIPONUM|                                                 99.|          
 _.9999                                              |   TIPONUM|                                               .9999|          
-_1.1                                                |   TIPONUM|                                                 1.1|          
-_340200000000000000000000000000000000000.0          |   TIPONUM|           340200000000000000000000000000000000000.0|          
-_0.00000000000000000000000000000000000001176        |   TIPONUM|         0.00000000000000000000000000000000000001176|          
-_01.1                                               |   TIPONUM|                                                01.1|          
-_1.10                                               |   TIPONUM|                                                1.10|          
-_00000000000000.125                                 |   TIPONUM|                                  00000000000000.125|          
-_32767                                              |   TIPOENT|                                               32767|          
-_00000000000000125                                  |   TIPOENT|                                   00000000000000125|          
-_@sdADaSjfla%dfg                                    |   TIPOCAD|                                     @sdADaSjfla%dfg|        15
-_asldk  fh sjf                                      |   TIPOCAD|                                       asldk  fh sjf|        13
-_12345678901234567890123456789012345678901234567890 |   TIPOCAD|  12345678901234567890123456789012345678901234567890|        50
-_a                                                  |   TIPOCAD|                                                   a|         1
-_a no es mas grande que b                           |   TIPOCAD|                            a no es mas grande que b|        24
-_a es mas grande que b y c es mas grande que b      |   TIPOCAD|       a es mas grande que b y c es mas grande que b|        45
-_a es mas grande que b o c es mas grande que b      |   TIPOCAD|       a es mas grande que b o c es mas grande que b|        45
-_9                                                  |   TIPOENT|                                                   9|          
-_ewr                                                |   TIPOCAD|                                                 ewr|         3
+_@sdADaSjfla%dfg                                    |   TIPOCAD|                                   "@sdADaSjfla%dfg"|        33
+_asldk__fh_sjf                                      |   TIPOCAD|                                     "asldk  fh sjf"|        31
+_27                                                 |   TIPOENT|                                                  27|          
+_500                                                |   TIPOENT|                                                 500|          
+_34                                                 |   TIPOENT|                                                  34|          
+_3                                                  |   TIPOENT|                                                   3|          
+_ewr                                                |   TIPOCAD|                                               "ewr"|         3
+_a_es_mas_grande_que_b                              |   TIPOCAD|                             "a es mas grande que b"|       111
+_a_es_mas_chico_o_igual_a_b                         |   TIPOCAD|                        "a es mas chico o igual a b"|       122
+_1                                                  |   TIPOENT|                                                   1|          
+_2                                                  |   TIPOENT|                                                   2|          
+_a_es_mas_grande_que_b_y_c_es_mas_grande_que_b      |   TIPOCAD|     "a es mas grande que b y c es mas grande que b"|       231
+_a_es_mas_grande_que_b_o_c_es_mas_grande_que_b      |   TIPOCAD|     "a es mas grande que b o c es mas grande que b"|       231
+_a_no_es_mas_grande_que_b                           |   TIPOCAD|                          "a no es mas grande que b"|       120
+_verderill                                          |   TIPOCAD|                                         "verderill"|        21
+_lenguajesmpilad                                    |   TIPOCAD|                                   "lenguajesmpilad"|        33
